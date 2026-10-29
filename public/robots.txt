@@ -1,2 +1,5 @@
 User-agent: *
-Disallow:
+Allow: /
+
+Content-Signal: search=yes, ai-train=no
+Sitemap: https://chalidanaislamicschool.sch.id/sitemap.xml

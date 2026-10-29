@@ -17,6 +17,31 @@ class Index extends Controller
 {
     public function index()
     {
+        if (str_contains(strtolower(request()->header('Accept', '')), 'text/markdown')) {
+            $markdown = <<<'MARKDOWN'
+# Chalidana Islamic School
+
+Chalidana Islamic School is an Islamic education institution in Gresik, East Java, Indonesia. Learn about our school, curriculum, campuses, admissions, events, and community.
+
+## Key pages
+
+- [About us](https://chalidanaislamicschool.sch.id/about-us)
+- [Admission](https://chalidanaislamicschool.sch.id/admission)
+- [Curricula](https://chalidanaislamicschool.sch.id/curricula)
+- [School history](https://chalidanaislamicschool.sch.id/school-history)
+- [School leadership](https://chalidanaislamicschool.sch.id/school-leadership)
+- [Our campuses](https://chalidanaislamicschool.sch.id/school)
+- [Events](https://chalidanaislamicschool.sch.id/events)
+- [Contact](https://chalidanaislamicschool.sch.id/contact)
+- [Terms](https://chalidanaislamicschool.sch.id/terms)
+MARKDOWN;
+
+            return response($markdown, 200, [
+                'Content-Type' => 'text/markdown; charset=utf-8',
+                'Link' => '<https://chalidanaislamicschool.sch.id/llms.txt>; rel="alternate"; type="text/plain", <https://chalidanaislamicschool.sch.id/>; rel="canonical"',
+            ]);
+        }
+
         $locale = current_locale();
         $cacheKey = 'landing.home.' . $locale;
         $payload = Cache::remember($cacheKey, now()->addMinutes(10), function () {
@@ -73,6 +98,8 @@ class Index extends Controller
             'site_favicon' => get_system('site_favicon'),
         ];
 
-        return view('landing.index', compact('settings', 'tagline', 'aboutSchool', 'campusAreas', 'campuses', 'cisInNumbers', 'cisUpdates', 'events', 'testimonials', 'testimonialExcerptLimit'));
+        return response()
+            ->view('landing.index', compact('settings', 'tagline', 'aboutSchool', 'campusAreas', 'campuses', 'cisInNumbers', 'cisUpdates', 'events', 'testimonials', 'testimonialExcerptLimit'))
+            ->header('Link', '<https://chalidanaislamicschool.sch.id/llms.txt>; rel="alternate"; type="text/plain", <https://chalidanaislamicschool.sch.id/>; rel="canonical"');
     }
 }

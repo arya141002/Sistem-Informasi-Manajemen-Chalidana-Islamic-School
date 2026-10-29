@@ -9,9 +9,9 @@
             <div class="row g-4 align-items-center">
                 <div class="col-lg-8 col-xl-7 animated fadeInLeft">
                     <div class="text-sm-center text-md-start">
-                        <h3 class="display-5 display-md-3 text-white text-lg-nowrap mb-3 [&_p]:d-inline [&_br]:d-none">
+                        <h1 class="display-5 display-md-3 text-white text-lg-nowrap mb-3 [&_p]:d-inline [&_br]:d-none">
                             {!! safe_rich_text(localized_value($tagline, 'title', $settings['site_name'] ?? config('app.name'))) !!}
-                        </h3>
+                        </h1>
                         <div class="mb-4 fs-5 hero-tagline-content">{!! safe_rich_text(localized_value($tagline, 'jargon', $settings['site_description'] ?? ('Website resmi ' . config('app.name')))) !!}</div>
                         <div class="mb-4 fs-5 hero-tagline-content">{!! safe_rich_text(localized_value($tagline, 'content', $settings['site_description'] ?? ('Website resmi ' . config('app.name')))) !!}</div>
                         <div class="d-flex justify-content-center justify-content-md-start flex-shrink-0 mb-4">
@@ -138,7 +138,7 @@
         <div class="container py-5">
             <div class="text-center mx-auto pb-5 wow fadeInUp section-heading-narrow" data-wow-delay="0.1s">
                 <h4 class="text-primary">{{ __('front.our_campuses') }}</h4>
-                <h1 class="display-4 mb-4">{{ __('front.explore_our_campuses') }}</h1>
+                <h2 class="display-4 mb-4">{{ __('front.explore_our_campuses') }}</h2>
                 <p class="mb-0">{{ __('front.explore_our_campuses_desc') }}</p>
             </div>
             <div class="row g-4 justify-content-center">
@@ -245,7 +245,7 @@
         <div class="container py-5">
             <div class="text-center mx-auto pb-5 wow fadeInUp section-heading-narrow" data-wow-delay="0.1s">
                 <h4 class="text-primary">{{ __('front.from_blog') }}</h4>
-                <h1 class="display-4 mb-4">{{ __('front.news_updates') }}</h1>
+                <h2 class="display-4 mb-4">{{ __('front.news_updates') }}</h2>
                 <p class="mb-0">{{ __('front.news_updates_desc') }}</p>
             </div>
             <div class="row g-4 justify-content-center">
@@ -292,7 +292,7 @@
         <div class="container py-5">
             <div class="text-center mx-auto pb-5 wow fadeInUp section-heading-narrow" data-wow-delay="0.1s">
                 <h4 class="text-primary">{{ __('front.testimonials') }}</h4>
-                <h1 class="display-4 mb-4">{{ __('front.families_say') }}</h1>
+                <h2 class="display-4 mb-4">{{ __('front.families_say') }}</h2>
                 <p class="mb-0">{{ __('front.families_say_desc') }}</p>
             </div>
             <div class="testimonial-carousel owl-carousel">

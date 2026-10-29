@@ -1,0 +1,16 @@
+# Chalidana Islamic School
+
+> Chalidana Islamic School is an Islamic education institution in Gresik, East Java, Indonesia.
+
+## Key pages
+
+- [Homepage](https://chalidanaislamicschool.sch.id/)
+- [About us](https://chalidanaislamicschool.sch.id/about-us)
+- [Admission](https://chalidanaislamicschool.sch.id/admission)
+- [Curricula](https://chalidanaislamicschool.sch.id/curricula)
+- [School history](https://chalidanaislamicschool.sch.id/school-history)
+- [School leadership](https://chalidanaislamicschool.sch.id/school-leadership)
+- [Events](https://chalidanaislamicschool.sch.id/events)
+- [Gallery](https://chalidanaislamicschool.sch.id/gallery)
+- [Contact](https://chalidanaislamicschool.sch.id/contact)
+- [Terms](https://chalidanaislamicschool.sch.id/terms)

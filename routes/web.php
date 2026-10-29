@@ -63,6 +63,9 @@ Route::get('/locale/{locale}', function (string $locale) {
 })->name('locale.switch');
 
 Route::get('/', [Index::class, 'index']);
+Route::view('/contact', 'contact')->name('contact');
+Route::view('/terms', 'terms')->name('terms');
+Route::get('/privacy-policy', fn () => response()->file(resource_path('views/privacy-policy.html')))->name('privacy-policy');
 Route::get('/admission', [LandingAdmission::class, 'index'])->name('landing.admission');
 Route::get('/about-us', [About::class, 'index']);
 Route::get('/curricula', [LandingCurricula::class, 'index'])->name('landing.curricula');

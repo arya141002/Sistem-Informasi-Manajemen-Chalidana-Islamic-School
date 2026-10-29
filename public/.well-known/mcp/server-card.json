@@ -1,0 +1,10 @@
+{
+  "name": "Chalidana Islamic School",
+  "version": "1.0.0",
+  "description": "Public information for Chalidana Islamic School.",
+  "endpoint": "https://chalidanaislamicschool.sch.id/mcp",
+  "capabilities": {
+    "tools": true,
+    "resources": true
+  }
+}

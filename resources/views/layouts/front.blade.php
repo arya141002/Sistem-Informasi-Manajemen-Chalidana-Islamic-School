@@ -37,7 +37,45 @@
         <meta content="{{ $siteKeywords }}" name="keywords">
         <meta content="{{ $siteDescription }}" name="description">
         <meta content="{{ $siteName }}" name="author">
+        <link rel="canonical" href="{{ url()->current() }}">
         <link rel="icon" type="image/x-icon" href="{{ asset('images/icon/CIS_Logo.webp') }}">
+        @php
+            $sameAs = $socialLinks->filter(fn ($link) => filled($link) && $link !== '#')->values()->all();
+            $siteUrl = rtrim(config('app.url'), '/');
+            $structuredData = [
+                '@context' => 'https://schema.org',
+                '@graph' => [
+                    [
+                        '@type' => ['Organization', 'EducationalOrganization'],
+                        '@id' => $siteUrl . '/#organization',
+                        'name' => $siteName,
+                        'url' => $siteUrl,
+                        'description' => $siteDescription,
+                        'email' => $contactEmail ?: null,
+                        'telephone' => $contactPhone ?: null,
+                        'sameAs' => $sameAs,
+                    ],
+                    [
+                        '@type' => 'WebSite',
+                        '@id' => $siteUrl . '/#website',
+                        'url' => $siteUrl,
+                        'name' => $siteName,
+                        'publisher' => ['@id' => $siteUrl . '/#organization'],
+                    ],
+                    [
+                        '@type' => 'WebPage',
+                        '@id' => url()->current() . '#webpage',
+                        'url' => url()->current(),
+                        'name' => $siteTitle,
+                        'description' => $siteDescription,
+                        'isPartOf' => ['@id' => $siteUrl . '/#website'],
+                    ],
+                ],
+            ];
+        @endphp
+        <script type="application/ld+json">
+        {!! json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
+        </script>
 
         <!-- Google Web Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -271,6 +309,10 @@
                                         @empty
                                             <p class="text-white mb-0">{{ __('front.no_campus_phones') }}</p>
                                         @endforelse
+                                        <div class="mt-4">
+                                            <a class="text-white-50 d-block mb-2" href="{{ url('/contact') }}">Contact</a>
+                                            <a class="text-white-50 d-block" href="{{ url('/terms') }}">Terms</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -485,6 +527,32 @@
                         titleElement.textContent = '{{ __('front.school_tour') }}';
                     }
                 });
+
+                if (navigator.modelContext && typeof navigator.modelContext.registerTool === 'function') {
+                    navigator.modelContext.registerTool({
+                        name: 'find_school_information',
+                        description: 'Find official information about Chalidana Islamic School, including admissions, programs, campuses, and contact details.',
+                        inputSchema: {
+                            type: 'object',
+                            properties: {
+                                topic: {
+                                    type: 'string',
+                                    description: 'The school information topic to find.'
+                                }
+                            },
+                            required: ['topic']
+                        },
+                        execute: async function ({ topic }) {
+                            const response = await fetch('/llms.txt', {
+                                headers: { Accept: 'text/plain' }
+                            });
+                            if (!response.ok) {
+                                throw new Error('School information is temporarily unavailable.');
+                            }
+                            return { topic: topic, content: await response.text() };
+                        }
+                    });
+                }
 
                 const homeVideoModalElement = document.getElementById('homeVideoModal');
                 const homeVideoPlayer = document.getElementById('homeVideoModalPlayer');
