@@ -1,12 +1,12 @@
 @extends('layouts.front')
 
 @section('landing')
-    <div class="container-fluid bg-breadcrumb">
-        <div class="container text-center py-5 page-title-container">
+    <div class="container-fluid bg-breadcrumb {{ $section === 'highlights' ? 'bg-breadcrumb-highlights' : 'bg-breadcrumb-announcement' }}">
+        <div class="container page-title-container py-5">
             <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">{{ $title }}</h4>
-            <ol class="breadcrumb d-flex justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
+            <ol class="breadcrumb mb-0 wow fadeInDown" data-wow-delay="0.3s">
                 <li class="breadcrumb-item"><a href="{{ url('/') }}">{{ __('front.breadcrumb_home') }}</a></li>
-                <li class="breadcrumb-item active text-primary">{{ $title }}</li>
+                <li class="breadcrumb-item active text-white">{{ $title }}</li>
             </ol>
         </div>
     </div>
@@ -38,13 +38,13 @@
                         <article class="blog-item h-100 shadow-sm">
                             <div class="blog-img">
                                 <img
-                                    src="{{ $item->img ? asset('images/whatsup/' . $item->img) : asset('landing/img/blog-1.png') }}"
+                                    src="{{ $item->img ? webp_asset('images/whatsup/' . $item->img) : webp_asset('landing/img/blog-1.png') }}"
                                     class="img-fluid rounded-top w-100 landing-card-image"
                                     alt="{{ localized_value($item, 'title') }}"
                                 >
-                                <div class="blog-categiry py-2 px-4">
-                                    <span>{{ localized_value($item->category, 'title', $title) }}</span>
-                                </div>
+                                <!--<div class="blog-categiry py-2 px-4">-->
+                                <!--    <span>{{ localized_value($item->category, 'title', $title) }}</span>-->
+                                <!--</div>-->
                             </div>
                             <div class="blog-content p-4 d-flex flex-column">
                                 <div class="blog-comment d-flex justify-content-between mb-3 gap-3 flex-wrap">

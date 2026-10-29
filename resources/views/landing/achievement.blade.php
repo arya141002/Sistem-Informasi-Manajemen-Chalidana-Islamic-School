@@ -1,10 +1,10 @@
 @extends('layouts.front')
 
 @section('landing')
-    <div class="container-fluid bg-breadcrumb">
-        <div class="container text-center py-5 page-title-container">
+    <div class="container-fluid bg-breadcrumb bg-breadcrumb-achievement">
+        <div class="container page-title-corner py-5 page-title-container text-start">
             <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">{{ __('front.achievement') }}</h4>
-            <ol class="breadcrumb d-flex justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
+            <ol class="breadcrumb d-flex justify-content-start mb-0 wow fadeInDown" data-wow-delay="0.3s">
                 <li class="breadcrumb-item"><a href="{{ url('/') }}">{{ __('front.breadcrumb_home') }}</a></li>
                 <li class="breadcrumb-item active text-primary">{{ __('front.achievement') }}</li>
             </ol>
@@ -43,25 +43,27 @@
                         <article class="team-item h-100 shadow-sm border-0">
                             <div class="team-img position-relative">
                                 <img
-                                    src="{{ $achievement->img ? asset('images/achievement/' . $achievement->img) : asset('landing/img/blog-2.png') }}"
-                                    class="img-fluid rounded-top w-100 landing-card-image"
+                                    src="{{ $achievement->img ? webp_asset('images/achievement/' . $achievement->img) : webp_asset('landing/img/blog-2.png') }}"
+                                    class="img-fluid rounded-top w-100 h-100 landing-card-image"
                                     alt="{{ localized_value($achievement, 'title') }}"
                                 >
                             </div>
                             <div class="team-title p-4 h-100">
                                 <div class="d-flex flex-wrap gap-2 mb-3">
                                     @if($achievement->campus)
-                                        <span class="badge bg-light text-primary">{{ $achievement->campus->title }}</span>
+                                        <span class="badge bg-light text-primary">{{ $achievement->campus->title }}</span><br />
                                     @endif
                                     @if($achievement->promoter)
-                                        <span class="badge bg-warning text-dark">{{ $achievement->promoter }}</span>
+                                        <span class="badge bg-warning text-dark text-wrap text-start">
+                                            {{ $achievement->promoter }}
+                                        </span>
                                     @endif
                                 </div>
-                                <p class="small text-white-50 mb-2">
+                                <p class="small mb-2">
                                     <i class="fa fa-calendar-alt me-2"></i>{{ $achievement->tanggal ? \Carbon\Carbon::parse($achievement->tanggal)->translatedFormat('d M Y') : __('front.events_date_tba') }}
                                 </p>
-                                <h4 class="mb-3">{{ localized_value($achievement, 'title') }}</h4>
-                                <div class="mb-0 text-white-50">
+                                <h4 class="mb-3 text-dark">{{ localized_value($achievement, 'title') }}</h4>
+                                <div class="mb-0 text-dark" style="text-align: justify;">
                                     {!! localized_value($achievement, 'content', '<p>' . e(__('front.achievement_content_empty')) . '</p>') !!}
                                 </div>
                             </div>

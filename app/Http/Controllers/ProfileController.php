@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -26,7 +27,24 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $data = $request->validated();
+
+        // Handle avatar upload
+        if ($request->hasFile('avatar')) {
+            $file = $request->file('avatar');
+
+            // delete existing avatar if present
+            if ($request->user()->avatar && Storage::disk('public')->exists('avatars/' . $request->user()->avatar)) {
+                Storage::disk('public')->delete('avatars/' . $request->user()->avatar);
+            }
+
+            $filename = 'avatar-' . $request->user()->id . '-' . time() . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('avatars', $filename, 'public');
+
+            $data['avatar'] = $filename;
+        }
+
+        $request->user()->fill($data);
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;

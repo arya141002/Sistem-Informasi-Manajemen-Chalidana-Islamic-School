@@ -11,17 +11,28 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('taglines', function (Blueprint $table) {
-            // Menambahkan kolom baru setelah kolom 'content_id'
-            $table->string('jargon')->nullable()->after('content_id');
-            $table->string('jargon_id')->nullable()->after('jargon');
-        });
+        if (!Schema::hasColumn('taglines', 'jargon')) {
+            Schema::table('taglines', function (Blueprint $table) {
+                $table->string('jargon')->nullable()->after('content_id');
+            });
+        }
+
+        if (!Schema::hasColumn('taglines', 'jargon_id')) {
+            Schema::table('taglines', function (Blueprint $table) {
+                $table->string('jargon_id')->nullable()->after('jargon');
+            });
+        }
     }
 
     public function down(): void
     {
         Schema::table('taglines', function (Blueprint $table) {
-            $table->dropColumn(['jargon', 'jargon_id']);
+            if (Schema::hasColumn('taglines', 'jargon')) {
+                $table->dropColumn(['jargon']);
+            }
+            if (Schema::hasColumn('taglines', 'jargon_id')) {
+                $table->dropColumn(['jargon_id']);
+            }
         });
     }
 };

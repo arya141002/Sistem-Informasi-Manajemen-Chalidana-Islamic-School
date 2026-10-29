@@ -3,7 +3,7 @@
 @section('landing')
     @php
         $breadcrumbImageUrl = !empty($event->img)
-            ? asset('images/events/' . $event->img)
+            ? webp_asset('images/events/' . $event->img)
             : null;
     @endphp
 
@@ -27,7 +27,7 @@
                 <div class="col-lg-8">
                     <article class="bg-white rounded-4 shadow-sm overflow-hidden wow fadeInUp" data-wow-delay="0.2s">
                         <img
-                            src="{{ $event->img ? asset('images/events/' . $event->img) : asset('landing/img/blog-1.png') }}"
+                            src="{{ $event->img ? webp_asset('images/events/' . $event->img) : webp_asset('landing/img/blog-1.png') }}"
                             alt="{{ localized_value($event, 'title') }}"
                             class="w-100 detail-hero-image"
                         >

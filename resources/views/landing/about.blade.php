@@ -6,10 +6,10 @@
         $bodySections = $orderedSections->slice(1)->values();
     @endphp
 
-    <div class="container-fluid bg-breadcrumb">
-        <div class="container text-center py-5 page-title-container">
-            <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">{{ __('front.about_page_title') }}</h4>
-            <ol class="breadcrumb d-flex justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
+    <div class="container-fluid bg-breadcrumb bg-breadcrumb-about">
+        <div class="container page-title-corner py-5 page-title-container text-start">
+            <h4 class="text-white display-4 mb-0 wow fadeInDown" data-wow-delay="0.1s">{{ __('front.about_page_title') }}</h4>
+            <ol class="breadcrumb d-flex justify-content-start mb-0 wow fadeInDown" data-wow-delay="0.3s">
                 <li class="breadcrumb-item"><a href="{{ url('/') }}">{{ __('front.breadcrumb_home') }}</a></li>
                 <li class="breadcrumb-item"><a href="#">{{ __('front.about_school') }}</a></li>
                 <li class="breadcrumb-item active text-primary">{{ __('front.about_us') }}</li>
@@ -51,7 +51,7 @@
                                     <div class="about-hero-media">
                                         @if(!empty($leadSection->img))
                                             <img
-                                                src="{{ asset('images/about_school/' . $leadSection->img) }}"
+                                                src="{{ webp_asset('/landing/img/background/' . $leadSection->img) }}"
                                                 alt="{{ localized_value($leadSection, 'title', __('front.about_school')) }}"
                                             >
                                         @else
@@ -72,8 +72,8 @@
                                 $displayNumber = str_pad((string) ($index + 2), 2, '0', STR_PAD_LEFT);
                                 $sectionImage = !empty($section->img)
                                     ? (in_array($section->id, [5], true)
-                                        ? asset('images/' . ltrim($section->img, '/'))
-                                        : asset('images/about_school/' . $section->img))
+                                        ? webp_asset('/landing/img/background/' . ltrim($section->img, '/'))
+                                        : webp_asset('/landing/img/background/' . $section->img))
                                     : null;
                             @endphp
                             <section

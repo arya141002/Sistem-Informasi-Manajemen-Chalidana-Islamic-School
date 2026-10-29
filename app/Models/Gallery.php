@@ -18,4 +18,6 @@ class Gallery extends Model
     {
         return $this->belongsTo(GalleryCategory::class, 'img_id', 'id');
     }
+    
+    
 }

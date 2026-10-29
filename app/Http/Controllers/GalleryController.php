@@ -12,7 +12,10 @@ class GalleryController extends Controller
     public function index()
     {
         $title = 'Gallery';
-        $categories = GalleryCategory::query()->select('id', 'title')->orderBy('title')->get();
+        $categories = GalleryCategory::query()
+        ->select('id', 'title', 'created_at')
+        ->latest() // atau ->orderBy('created_at', 'desc')
+        ->get();
         return view('admin.gallery', compact('title', 'categories'));
     }
 

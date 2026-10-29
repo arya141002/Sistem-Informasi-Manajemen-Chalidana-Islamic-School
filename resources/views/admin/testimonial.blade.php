@@ -232,7 +232,7 @@
     <script>
         function imageUrl(filename) {
             if (!filename) return '';
-            return `/images/testimonial/${filename}`;
+            return `/public/images/testimonial/${filename}`;
         }
 
         const editorStore = {};

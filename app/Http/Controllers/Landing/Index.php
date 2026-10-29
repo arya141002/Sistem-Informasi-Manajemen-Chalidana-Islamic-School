@@ -11,33 +11,57 @@ use App\Models\CISUpdate;
 use App\Models\Event;
 use App\Models\Testimonial;
 use App\Models\Tagline;
+use Illuminate\Support\Facades\Cache;
 
 class Index extends Controller
 {
     public function index()
     {
-        $tagline = Tagline::first();
-        $aboutSchool = About_school::find(11);
-        $campusAreas = CampusArea::query()
-            ->whereNull('deleted_at')
-            ->orderBy('title')
-            ->get(['title', 'address', 'phone']);
-        $campuses = Campus::with('campusArea:id,title')
-            ->whereNull('deleted_at')
-            ->orderBy('title')
-            ->get();
-        $cisInNumbers = CisInNumber::query()->latest()->get();
-        $cisUpdates = CISUpdate::query()
-            ->where('status', true)
-            ->latest()
-            ->take(5)
-            ->get();
-        $events = Event::with('study:id,title')->latest()->take(6)->get();
-        $testimonials = Testimonial::with(['grade:id,name', 'campus:id,title'])
-            ->where('status', true)
-            ->latest()
-            ->take(9)
-            ->get();
+        $locale = current_locale();
+        $cacheKey = 'landing.home.' . $locale;
+        $payload = Cache::remember($cacheKey, now()->addMinutes(10), function () {
+            $tagline = Tagline::first();
+            $aboutSchool = About_school::query()
+                ->whereNull('deleted_at')
+                ->latest('id')
+                ->first();
+            $campusAreas = CampusArea::query()
+                ->whereNull('deleted_at')
+                ->orderBy('title')
+                ->get(['title', 'address', 'phone']);
+            $campuses = Campus::with('campusArea:id,title')
+                ->whereNull('deleted_at')
+                ->orderBy('title')
+                ->get();
+            $cisInNumbers = CisInNumber::query()->latest()->get();
+            $cisUpdates = CISUpdate::query()
+                ->where('status', '1')
+                ->latest()
+                ->get();
+            $events = Event::with('study:id,title')->latest()->take(6)->get();
+            $testimonials = Testimonial::with(['grade:id,name', 'campus:id,title'])
+                ->where('status', true)
+                ->latest()
+                ->take(9)
+                ->get();
+
+            return compact(
+                'tagline',
+                'aboutSchool',
+                'campusAreas',
+                'campuses',
+                'cisInNumbers',
+                'cisUpdates',
+                'events',
+                'testimonials'
+            );
+        });
+        extract($payload);
+
+        $testimonialExcerptLimit = $testimonials
+            ->map(fn ($testimonial) => mb_strlen(trim(strip_tags($testimonial->content ?? ''))))
+            ->filter(fn ($length) => $length > 0)
+            ->min() ?? 120;
 
         $settings = [
             'site_name' => get_system('site_name', config('app.name')),
@@ -49,6 +73,6 @@ class Index extends Controller
             'site_favicon' => get_system('site_favicon'),
         ];
 
-        return view('landing.index', compact('settings', 'tagline', 'aboutSchool', 'campusAreas', 'campuses', 'cisInNumbers', 'cisUpdates', 'events', 'testimonials'));
+        return view('landing.index', compact('settings', 'tagline', 'aboutSchool', 'campusAreas', 'campuses', 'cisInNumbers', 'cisUpdates', 'events', 'testimonials', 'testimonialExcerptLimit'));
     }
 }

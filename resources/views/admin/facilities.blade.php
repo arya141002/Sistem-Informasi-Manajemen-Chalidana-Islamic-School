@@ -260,7 +260,7 @@
 
         function imageUrl(filename) {
             if (!filename) return '';
-            return `/images/facility/${filename}`;
+            return `/public/images/facility/${filename}`;
         }
 
         function initRichEditors() {

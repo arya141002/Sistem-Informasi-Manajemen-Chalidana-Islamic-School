@@ -36,7 +36,11 @@ class YoutubeShortLinkController extends Controller
             'youtube_link' => 'required|url|max:255',
         ]);
 
-        YoutubeShortLink::create($request->only(['campus_id', 'title', 'youtube_link']));
+        YoutubeShortLink::create([
+            'campus_id' => $request->campus_id,
+            'title' => $request->title,
+            'youtube_short' => $request->youtube_link,
+        ]);
         return response()->json(['message' => 'Youtube short link created successfully']);
     }
 
@@ -55,7 +59,11 @@ class YoutubeShortLinkController extends Controller
         ]);
 
         $item = YoutubeShortLink::findOrFail($id);
-        $item->update($request->only(['campus_id', 'title', 'youtube_link']));
+        $item->update([
+            'campus_id' => $request->campus_id,
+            'title' => $request->title,
+            'youtube_short' => $request->youtube_link,
+        ]);
         return response()->json(['message' => 'Youtube short link updated successfully']);
     }
 

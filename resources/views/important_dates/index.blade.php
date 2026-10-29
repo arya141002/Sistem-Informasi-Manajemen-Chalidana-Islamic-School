@@ -16,6 +16,8 @@
         .id-cal-cell:hover { border-color:#d0d5ff; box-shadow: 0 2px 8px rgba(105,108,255,.1); }
         .id-cal-cell.muted { background:#fafafa; color:#9aa0a6; }
         .id-cal-cell.has-event { background:#1f3b8f; border-color:#1f3b8f; color:#fff; }
+        .id-cal-cell.red-date { background:#fff5f5; border-color:#fecaca; }
+        .id-cal-cell.red-date.has-event { background:#fff1f2; border-color:#fb7185; color:#111827; }
         .id-cal-cell.pick { outline: 2px dashed #ffb020; outline-offset: -2px; }
         .id-mini-cal { border:1px solid #eef1f5; border-radius:.6rem; padding:.6rem; background:#fff; }
         .id-mini-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:.5rem; }
@@ -230,13 +232,15 @@
 
         function buildCell(date, muted) {
             const key = formatDateKey(date);
-            const hasEvent = (eventsByDate[key] && eventsByDate[key].length);
+            const dayEvents = eventsByDate[key] || [];
+            const hasEvent = dayEvents.length;
             const cell = document.createElement('div');
             const isSelected = selectedDate === key;
             const today = formatDateKey(new Date());
             const isPicked = multiSelected.has(key);
-            cell.className = 'id-cal-cell' + (muted ? ' muted' : '') + (hasEvent ? ' has-event' : '') + (isSelected ? ' selected' : '') + (isPicked ? ' pick' : '') + (key === today ? ' today' : '');
             const isSunday = date.getDay() === 0;
+            const isRedDate = isSunday || dayEvents.some((event) => event.is_holiday);
+            cell.className = 'id-cal-cell' + (muted ? ' muted' : '') + (hasEvent ? ' has-event' : '') + (isRedDate ? ' red-date' : '') + (isSelected ? ' selected' : '') + (isPicked ? ' pick' : '') + (key === today ? ' today' : '');
             cell.innerHTML = `<div class="id-cal-date${isSunday ? ' id-cal-sun' : ''}">${date.getDate()}</div>`;
             cell.addEventListener('click', () => {
                 if (multiMode && multiMode.checked) {
@@ -284,11 +288,16 @@
             const res = await fetch(`{{ route('important-dates.events') }}?campus_id=${activeCampus.id}&year=${year}&month=${month}`);
             const data = await res.json();
             data.forEach((e) => {
-                const singleKey = (e.event_date || '').toString().slice(0, 10);
-                if (singleKey) {
-                    if (!eventsByDate[singleKey]) eventsByDate[singleKey] = [];
-                    eventsByDate[singleKey].push(e);
+                const startKey = (e.start_date || e.event_date || '').toString().slice(0, 10);
+                const endKey = (e.end_date || e.event_date || startKey).toString().slice(0, 10);
+                if (!startKey) {
+                    return;
                 }
+
+                enumerateRange(startKey, endKey).forEach((dateKey) => {
+                    if (!eventsByDate[dateKey]) eventsByDate[dateKey] = [];
+                    eventsByDate[dateKey].push(e);
+                });
             });
             if (!selectedDate || !selectedDate.startsWith(`${year}-${String(month).padStart(2, '0')}`)) {
                 const today = new Date();
@@ -381,6 +390,19 @@
                 badge.textContent = d;
                 multiSelectedEl.appendChild(badge);
             });
+        }
+
+        function enumerateRange(start, end) {
+            const dates = [];
+            const cursor = new Date(start + 'T00:00:00');
+            const finalDate = new Date(end + 'T00:00:00');
+
+            while (cursor <= finalDate) {
+                dates.push(formatDateKey(cursor));
+                cursor.setDate(cursor.getDate() + 1);
+            }
+
+            return dates;
         }
 
         if (btnClearMulti) {

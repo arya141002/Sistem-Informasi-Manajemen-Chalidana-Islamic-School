@@ -116,7 +116,7 @@
     </div>
 
     <script>
-        const storageBase = '{{ asset('images/popup') }}';
+        const storageBase = '{{ webp_asset('images/popup') }}';
         function imageUrl(path) {
             if (!path) return '';
             if (path.startsWith('http://') || path.startsWith('https://')) return path;
@@ -147,9 +147,18 @@
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 { data: 'title', name: 'title'},
-                { data: 'img', name: 'img',
-                    render: function (data){
+                { 
+                    data: 'img', 
+                    name: 'img',
+                    render: function (data) {
                         if (!data) return '-';
+                        
+                        // 1. Jika backend sudah me-render tag <img> lengkap, langsung tampilkan
+                        if (typeof data === 'string' && data.includes('<img')) {
+                            return data;
+                        }
+                
+                        // 2. Jika backend hanya mengirim nama file/path murni
                         return `<img src="${imageUrl(data)}" alt="CIS" class="img-thumbnail" style="height: 46px; width: 64px; object-fit: cover;">`;
                     }
                 },

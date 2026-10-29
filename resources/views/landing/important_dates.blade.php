@@ -17,10 +17,10 @@
         ];
     @endphp
 
-    <div class="container-fluid bg-breadcrumb">
-        <div class="container text-center py-5 page-title-container">
+    <div class="container-fluid bg-breadcrumb bg-breadcrumb-important-dates">
+        <div class="container page-title-corner py-5 page-title-container text-center text-lg-start">
             <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">{{ __('front.important_dates') }}</h4>
-            <ol class="breadcrumb d-flex justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
+            <ol class="breadcrumb d-flex justify-content-center justify-content-lg-start mb-0 wow fadeInDown" data-wow-delay="0.3s">
                 <li class="breadcrumb-item"><a href="{{ url('/') }}">{{ __('front.breadcrumb_home') }}</a></li>
                 <li class="breadcrumb-item active text-primary">{{ __('front.important_dates') }}</li>
             </ol>
@@ -112,9 +112,9 @@
             let events = [];
             let eventsByDate = {};
 
-            weekdays.forEach(function (day) {
+            weekdays.forEach(function (day, index) {
                 const el = document.createElement('div');
-                el.className = 'important-dates-weekday';
+                el.className = 'important-dates-weekday' + (index === 6 ? ' is-red-date' : '');
                 el.textContent = day;
                 weekdaysRow.appendChild(el);
             });
@@ -222,23 +222,29 @@
 
                 title.textContent = formatMonthTitle(firstDay);
 
-                function appendCell(date, muted) {
+                function appendEmptyCell() {
+                    const cell = document.createElement('div');
+                    cell.className = 'important-dates-cell is-empty';
+                    grid.appendChild(cell);
+                }
+
+                function appendCell(date) {
                     const dateKey = formatDateKey(date);
                     const dayEvents = eventsByDate[dateKey] || [];
+                    const isRedDate = date.getDay() === 0 || dayEvents.some(function (event) {
+                        return event.is_holiday;
+                    });
                     const cell = document.createElement('button');
                     cell.type = 'button';
                     cell.className = 'important-dates-cell'
-                        + (muted ? ' is-muted' : '')
                         + (dayEvents.length ? ' has-event' : '')
+                        + (isRedDate ? ' is-red-date' : '')
                         + (selectedDate === dateKey ? ' is-selected' : '');
 
                     cell.innerHTML = `
                         <span class="important-dates-cell-date">${date.getDate()}</span>
                         <span class="important-dates-cell-content">
-                            ${dayEvents.slice(0, 2).map(function (event) {
-                                return `<span class="important-dates-cell-chip">${event.title}</span>`;
-                            }).join('')}
-                            ${dayEvents.length > 2 ? `<span class="important-dates-cell-more">${copy.moreLabel.replace('__COUNT__', dayEvents.length - 2)}</span>` : ''}
+                            ${dayEvents.length ? `<span class="important-dates-cell-dot${dayEvents.some(function (event) { return event.is_holiday; }) ? ' is-holiday' : ''}"></span>` : ''}
                         </span>
                     `;
 
@@ -252,16 +258,16 @@
                 }
 
                 for (let i = 0; i < startOffset; i++) {
-                    appendCell(new Date(year, month - 1, prevMonthDays - startOffset + i + 1), true);
+                    appendEmptyCell();
                 }
 
                 for (let day = 1; day <= daysInMonth; day++) {
-                    appendCell(new Date(year, month, day), false);
+                    appendCell(new Date(year, month, day));
                 }
 
                 const totalCells = grid.children.length;
                 for (let day = 1; day <= 42 - totalCells; day++) {
-                    appendCell(new Date(year, month + 1, day), true);
+                    appendEmptyCell();
                 }
             }
 

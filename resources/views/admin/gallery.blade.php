@@ -103,7 +103,7 @@
     </div>
 
     <script>
-        function imageUrl(path) { return path ? `/images/gallery/detail/${path}` : ''; }
+        function imageUrl(path) { return path ? `/public/images/gallery/detail/${path}` : ''; }
         function formatValidationErrors(xhr, fallback) {
             if (xhr.responseJSON && xhr.responseJSON.errors) {
                 const messages = [];

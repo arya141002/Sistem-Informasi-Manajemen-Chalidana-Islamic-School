@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Campus;
 use App\Models\ImportantDateBranch;
 use App\Models\ImportantDateEvent;
+use App\Support\IndonesiaHolidayCalendar;
 use Illuminate\Http\Request;
 
 class ImportantDateController extends Controller
@@ -46,7 +47,9 @@ class ImportantDateController extends Controller
             ->map(function ($e) {
                 $e->event_date = $e->event_date ? $e->event_date->format('Y-m-d') : null;
                 return $e;
-            });
+            })
+            ->concat(IndonesiaHolidayCalendar::eventsForMonth((int) $request->year, (int) $request->month))
+            ->values();
 
         return response()->json($events);
     }

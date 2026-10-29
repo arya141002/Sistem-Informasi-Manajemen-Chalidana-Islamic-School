@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Campus;
+use App\Models\SocialMedia;
 use Illuminate\Support\ServiceProvider;
 use App\Models\Menu;
 use Illuminate\Support\Facades\View;
@@ -36,13 +37,20 @@ class AppServiceProvider extends ServiceProvider
                     return;
                 }
 
-                $sidebarMenus = Menu::with(['childrenRecursive' => function($q) use ($userRole) {
+                $roleKey = (string) $userRole;
+
+                $sidebarMenus = Menu::with(['childrenRecursive' => function($q) use ($roleKey) {
                         // Filter submenu berdasarkan kolom role_access
-                        $q->where('role_access', 'LIKE', '%' . $userRole . '%')
-                        ->orderBy('order', 'asc');
+                        $q->where(function ($query) use ($roleKey) {
+                            $query->whereJsonContains('role_access', $roleKey)
+                                  ->orWhereJsonContains('role_access', intval($roleKey));
+                        })->orderBy('order', 'asc');
                     }])
                     ->whereNull('parent_id')
-                    ->where('role_access', 'LIKE', '%' . $userRole . '%') // Filter menu utama
+                    ->where(function ($query) use ($roleKey) {
+                        $query->whereJsonContains('role_access', $roleKey)
+                              ->orWhereJsonContains('role_access', intval($roleKey));
+                    }) // Filter menu utama
                     ->orderBy('order', 'asc')
                     ->get();
             } else {
@@ -59,7 +67,15 @@ class AppServiceProvider extends ServiceProvider
                 ->orderBy('title')
                 ->get();
 
-            $view->with('frontCampuses', $frontCampuses);
+            $socialMedias = SocialMedia::query()
+                ->select('title', 'link')
+                ->orderBy('id')
+                ->get();
+
+            $view->with([
+                'frontCampuses' => $frontCampuses,
+                'socialMedias' => $socialMedias,
+            ]);
         });
     }
 }

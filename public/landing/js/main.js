@@ -70,25 +70,6 @@
         }
     });
 
-    $(document).on('click', '.testimonial-toggle', function () {
-        var button = $(this);
-        var content = button.siblings('.js-testimonial-content');
-        var isExpanded = button.attr('data-expanded') === 'true';
-        var shortContent = content.attr('data-short-content') || '';
-        var fullContent = content.attr('data-full-content') || '';
-        var moreLabel = button.attr('data-label-more') || 'Read More';
-        var lessLabel = button.attr('data-label-less') || 'Read Less';
-
-        if (!content.length) {
-            return;
-        }
-
-        content.text(isExpanded ? shortContent : fullContent);
-        button.attr('data-expanded', isExpanded ? 'false' : 'true');
-        button.text(isExpanded ? moreLabel : lessLabel);
-    });
-
-
     // Facts counter
     $('[data-toggle="counter-up"]').counterUp({
         delay: 5,

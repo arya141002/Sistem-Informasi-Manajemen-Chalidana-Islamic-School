@@ -1,30 +1,52 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Campus;
 use App\Models\User;
 use App\Models\Role;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
+    private function allowedRoleNames(): array
+    {
+        return [
+            'super_admin',
+            'managing_director',
+            'administration_staff',
+            'teacher',
+            'principal',
+            'administrator',
+        ];
+    }
+
     public function index()
     {
         $title = 'User Management';
-        $roles = Role::all();
+        $roles = Role::whereIn('name', $this->allowedRoleNames())->get();
+        $campuses = Campus::query()->select('id', 'title')->orderBy('title')->get();
         $breadcrumbs = [
             ['name' => 'Dashboard', 'url' => route('dashboard')],
             ['name' => 'User Management', 'url' => route('user.index')],
         ];
-        return view('admin.user', compact('title', 'breadcrumbs', 'roles'));
+        return view('admin.user', compact('title', 'breadcrumbs', 'roles', 'campuses'));
     }
 
     public function data()
     {
-        $query = User::with('role')->select('users.*');
+        $query = User::with(['role', 'campus'])
+            ->whereHas('role', function ($roleQuery) {
+                $roleQuery->whereIn('name', $this->allowedRoleNames());
+            })
+            ->select('users.*');
         return datatables()->of($query)
             ->addColumn('role_name', function (User $user) {
                 return $user->role ? $user->role->display_name : '-';
+            })
+            ->addColumn('campus_name', function (User $user) {
+                return $user->campus ? $user->campus->title : 'All campuses';
             })
             ->addColumn('action', function ($row) {
                 return '
@@ -44,7 +66,21 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
-            'role_id' => 'required|exists:roles,id',
+            'role_id' => [
+                'required',
+                Rule::exists('roles', 'id')->where(function ($query) {
+                    $query->whereIn('name', $this->allowedRoleNames());
+                }),
+            ],
+            'campus_id' => [
+                'nullable',
+                'exists:campuses,id',
+                Rule::requiredIf(function () use ($request) {
+                    return Role::whereKey($request->role_id)
+                        ->where('name', 'administration_staff')
+                        ->exists();
+                }),
+            ],
         ]);
 
         User::create([
@@ -52,6 +88,7 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => $request->password,
             'role_id' => $request->role_id,
+            'campus_id' => $request->campus_id,
         ]);
 
         return response()->json(['message' => 'User berhasil disimpan!']);
@@ -70,13 +107,28 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'role_id' => 'required|exists:roles,id',
+            'role_id' => [
+                'required',
+                Rule::exists('roles', 'id')->where(function ($query) {
+                    $query->whereIn('name', $this->allowedRoleNames());
+                }),
+            ],
+            'campus_id' => [
+                'nullable',
+                'exists:campuses,id',
+                Rule::requiredIf(function () use ($request) {
+                    return Role::whereKey($request->role_id)
+                        ->where('name', 'administration_staff')
+                        ->exists();
+                }),
+            ],
         ]);
 
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
             'role_id' => $request->role_id,
+            'campus_id' => $request->campus_id,
         ]);
 
         return response()->json(['message' => 'User berhasil diperbarui!']);

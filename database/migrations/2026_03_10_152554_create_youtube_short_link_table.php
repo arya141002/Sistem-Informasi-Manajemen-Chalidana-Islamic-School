@@ -37,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('youtube_short_link');
+        Schema::dropIfExists('youtube_shorts');
     }
 };

@@ -51,7 +51,7 @@ class MenuController extends Controller
             'title' => $request->title,
             'url' => $request->url,
             'parent_id' => $request->parent_id,
-            'role_access' => $request->roles ? implode(',', $request->roles) : null,
+            'role_access' => $request->roles ? array_map('intval', $request->roles) : null,
             'is_active' => true
         ]);
 
@@ -90,7 +90,7 @@ class MenuController extends Controller
             'title' => $request->title,
             'url' => $request->url,
             'parent_id' => $request->parent_id,
-            'role_access' => $request->roles ? implode(',', $request->roles) : null,
+            'role_access' => $request->roles ? array_map('intval', $request->roles) : null,
         ]);
 
         return response()->json(['message' => 'Menu berhasil diperbarui!']);

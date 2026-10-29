@@ -45,7 +45,7 @@
                 </div>
                 <div class="modal-body py-3 py-md-4">
                     <div class="row g-3">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label">Study</label>
                             <select class="form-select" id="add-study_id">
                                 <option value="">Select Study</option>
@@ -54,11 +54,11 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label">Date</label>
                             <input type="date" class="form-control" id="add-tanggal">
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label">Image</label>
                             <input type="file" class="form-control" id="add-img" accept="image/*">
                         </div>
@@ -190,7 +190,7 @@
 
     <script>
         const editorStore = {};
-        function imageUrl(path) { return path ? `/images/events/${path}` : ''; }
+        function imageUrl(path) { return path ? `/public/images/events/${path}` : ''; }
 
         function initRichEditors() {
             document.querySelectorAll('.rich-editor').forEach((box) => {

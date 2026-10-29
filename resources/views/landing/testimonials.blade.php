@@ -2,10 +2,10 @@
 
 @section('landing')
 
-    <div class="container-fluid bg-breadcrumb">
-        <div class="container text-center py-5 page-title-container">
+    <div class="container-fluid bg-breadcrumb bg-breadcrumb-testimonials">
+        <div class="container page-title-corner py-5 page-title-container text-start">
             <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">{{ __('front.testimonials') }}</h4>
-            <ol class="breadcrumb d-flex justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
+            <ol class="breadcrumb d-flex justify-content-start mb-0 wow fadeInDown" data-wow-delay="0.3s">
                 <li class="breadcrumb-item"><a href="{{ url('/') }}">{{ __('front.breadcrumb_home') }}</a></li>
                 <li class="breadcrumb-item active text-primary">{{ __('front.testimonials') }}</li>
             </ol>
@@ -26,7 +26,7 @@
                         <div class="team-item testimonial-list-card h-100">
                             <div class="team-img">
                                 <img
-                                    src="{{ $testimonial->images ? asset('images/testimonial/' . $testimonial->images) : asset('landing/img/team-1.jpg') }}"
+                                    src="{{ $testimonial->images ? webp_asset('images/testimonial/' . $testimonial->images) : webp_asset('landing/img/team-1.jpg') }}"
                                     class="img-fluid rounded-top w-100 testimonial-list-image"
                                     alt="{{ $testimonial->student }}"
                                 >
@@ -43,7 +43,7 @@
                                     {{ $testimonial->title }}
                                 </p>
                                 <p class="mb-3 small testimonial-list-meta">{{ $testimonial->grade->name ?? '-' }}{{ $testimonial->campus ? ' • ' . $testimonial->campus->title : '' }}</p>
-                                <p class="mb-0 testimonial-list-content">{{ $testimonial->content }}</p>
+                                <div class="mb-0 testimonial-list-content">{!! $testimonial->content !!}</div>
                             </div>
                         </div>
                     </div>

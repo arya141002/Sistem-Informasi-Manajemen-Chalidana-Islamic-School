@@ -9,6 +9,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use App\Models\User;
+use App\Models\Achievement;
+use App\Models\Event;
+use App\Models\TeacherAndStaff;
+use App\Models\Testimonial;
+use App\Models\AdmissionApplication;
+use App\Models\Gallery;
+use App\Models\Curriculum;
 
 class DashboardController extends Controller
 {
@@ -19,11 +27,37 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return view('admin/dashboard');
+        if (auth()->user()?->account_type === 'parent') {
+            return redirect()->route('parent.dashboard');
+        }
+
+        $totalUsers = User::count();
+        $totalTeachers = TeacherAndStaff::count();
+        $totalEvents = Event::count();
+        $totalAchievements = Achievement::count();
+        $totalTestimonials = Testimonial::count();
+        $totalAdmissions = AdmissionApplication::count();
+        $totalGalleries = Gallery::count();
+        $totalCurriculum = Curriculum::count();
+        $recentTestimonials = Testimonial::latest()->take(5)->get();
+
+        return view('admin/dashboard', compact(
+            'totalUsers',
+            'totalTeachers',
+            'totalEvents',
+            'totalAchievements',
+            'totalTestimonials',
+            'totalAdmissions',
+            'totalGalleries',
+            'totalCurriculum',
+            'recentTestimonials'
+        ));
     }
 
     public function visitorStats(Request $request): JsonResponse
     {
+        abort_if(auth()->user()?->account_type === 'parent', 403);
+
         $validated = $request->validate([
             'period' => 'nullable|in:daily,weekly,monthly,custom',
             'start_date' => 'nullable|date',

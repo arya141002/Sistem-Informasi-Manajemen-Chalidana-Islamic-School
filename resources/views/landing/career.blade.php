@@ -1,10 +1,10 @@
 @extends('layouts.front')
 
 @section('landing')
-    <div class="container-fluid bg-breadcrumb">
-        <div class="container text-center py-5 page-title-container">
-            <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">{{ __('front.career') }}</h4>
-            <ol class="breadcrumb d-flex justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
+    <div class="container-fluid bg-breadcrumb bg-breadcrumb-career">
+        <div class="container page-title-corner py-5 page-title-container text-start">
+            <h4 class="text-white display-4 mb-2 wow fadeInDown" data-wow-delay="0.1s">{{ __('front.career') }}</h4>
+            <ol class="breadcrumb d-flex justify-content-start mb-0 wow fadeInDown" data-wow-delay="0.3s">
                 <li class="breadcrumb-item"><a href="{{ url('/') }}">{{ __('front.breadcrumb_home') }}</a></li>
                 <li class="breadcrumb-item active text-primary">{{ __('front.career') }}</li>
             </ol>
@@ -81,6 +81,13 @@
                                     <div class="text-muted small">
                                         {{ __('front.career_status_label') }}: {{ $isOpen ? __('front.career_filter_open') : __('front.career_filter_closed') }}
                                     </div>
+                                    @if($isOpen)
+                                        <div class="text-muted small mt-2">
+                                            <span class="fa fa-envelope text-primary me-1"></span>
+                                            {{ __('front.career_hrd_email_label') }}:
+                                            <a href="mailto:hrd@chalidanaislamicschool.sch.id">hrd@chalidanaislamicschool.sch.id</a>
+                                        </div>
+                                    @endif
                                 </div>
                                 <div class="text-lg-end">
                                     <a href="#career-{{ $career->id }}" class="btn btn-outline-primary rounded-pill px-4 py-2" data-bs-toggle="collapse" role="button" aria-expanded="{{ $isSubmittedCareer ? 'true' : 'false' }}" aria-controls="career-{{ $career->id }}">
@@ -99,71 +106,20 @@
                                                 <p class="text-muted mb-0">{{ __('front.career_apply_note') }}</p>
                                             </div>
 
-                                            <form method="POST" action="{{ route('landing.career.apply') }}" enctype="multipart/form-data" class="row g-3">
-                                                @csrf
-                                                <input type="hidden" name="career_id" value="{{ $career->id }}">
-
-                                                <div class="col-md-6">
-                                                    <label for="full_name_{{ $career->id }}" class="form-label fw-semibold">{{ __('front.career_full_name') }} <span class="text-danger">*</span></label>
-                                                    <input type="text" id="full_name_{{ $career->id }}" name="full_name" class="form-control {{ $isSubmittedCareer && $errors->has('full_name') ? 'is-invalid' : '' }}" value="{{ $isSubmittedCareer ? old('full_name') : '' }}" required>
-                                                    @if($isSubmittedCareer && $errors->has('full_name'))
-                                                        <div class="invalid-feedback">{{ $errors->first('full_name') }}</div>
-                                                    @endif
+                                            <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 bg-white rounded-3 border p-3 mb-4">
+                                                <div class="text-muted small">
+                                                    <div>
+                                                        <span class="fa fa-envelope text-primary me-1"></span>
+                                                        {{ __('front.career_hrd_email_label') }}:
+                                                        <a href="mailto:hrd@chalidanaislamicschool.sch.id">hrd@chalidanaislamicschool.sch.id</a>
+                                                    </div>
+                                                    <div>{{ __('front.career_cv_template_help') }}</div>
                                                 </div>
-
-                                                <div class="col-md-6">
-                                                    <label for="email_{{ $career->id }}" class="form-label fw-semibold">{{ __('front.career_email') }} <span class="text-danger">*</span></label>
-                                                    <input type="email" id="email_{{ $career->id }}" name="email" class="form-control {{ $isSubmittedCareer && $errors->has('email') ? 'is-invalid' : '' }}" value="{{ $isSubmittedCareer ? old('email') : '' }}" required>
-                                                    @if($isSubmittedCareer && $errors->has('email'))
-                                                        <div class="invalid-feedback">{{ $errors->first('email') }}</div>
-                                                    @endif
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <label for="phone_{{ $career->id }}" class="form-label fw-semibold">{{ __('front.career_phone') }} <span class="text-danger">*</span></label>
-                                                    <input type="text" id="phone_{{ $career->id }}" name="phone" class="form-control {{ $isSubmittedCareer && $errors->has('phone') ? 'is-invalid' : '' }}" value="{{ $isSubmittedCareer ? old('phone') : '' }}" required>
-                                                    @if($isSubmittedCareer && $errors->has('phone'))
-                                                        <div class="invalid-feedback">{{ $errors->first('phone') }}</div>
-                                                    @endif
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <label for="latest_education_{{ $career->id }}" class="form-label fw-semibold">{{ __('front.career_latest_education') }}</label>
-                                                    <input type="text" id="latest_education_{{ $career->id }}" name="latest_education" class="form-control {{ $isSubmittedCareer && $errors->has('latest_education') ? 'is-invalid' : '' }}" value="{{ $isSubmittedCareer ? old('latest_education') : '' }}" placeholder="{{ __('front.career_latest_education_placeholder') }}">
-                                                    @if($isSubmittedCareer && $errors->has('latest_education'))
-                                                        <div class="invalid-feedback">{{ $errors->first('latest_education') }}</div>
-                                                    @endif
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <label for="cv_file_{{ $career->id }}" class="form-label fw-semibold">{{ __('front.career_cv_file') }}</label>
-                                                    <input type="file" id="cv_file_{{ $career->id }}" name="cv_file" class="form-control {{ $isSubmittedCareer && $errors->has('cv_file') ? 'is-invalid' : '' }}" accept=".pdf,.doc,.docx">
-                                                    <div class="form-text">{{ __('front.career_cv_file_help') }}</div>
-                                                    @if($isSubmittedCareer && $errors->has('cv_file'))
-                                                        <div class="invalid-feedback">{{ $errors->first('cv_file') }}</div>
-                                                    @endif
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <label for="portfolio_url_{{ $career->id }}" class="form-label fw-semibold">{{ __('front.career_portfolio_url') }}</label>
-                                                    <input type="url" id="portfolio_url_{{ $career->id }}" name="portfolio_url" class="form-control {{ $isSubmittedCareer && $errors->has('portfolio_url') ? 'is-invalid' : '' }}" value="{{ $isSubmittedCareer ? old('portfolio_url') : '' }}" placeholder="https://">
-                                                    @if($isSubmittedCareer && $errors->has('portfolio_url'))
-                                                        <div class="invalid-feedback">{{ $errors->first('portfolio_url') }}</div>
-                                                    @endif
-                                                </div>
-
-                                                <div class="col-12">
-                                                    <label for="cover_message_{{ $career->id }}" class="form-label fw-semibold">{{ __('front.career_cover_message') }}</label>
-                                                    <textarea id="cover_message_{{ $career->id }}" name="cover_message" rows="4" class="form-control {{ $isSubmittedCareer && $errors->has('cover_message') ? 'is-invalid' : '' }}" placeholder="{{ __('front.career_cover_message_placeholder') }}">{{ $isSubmittedCareer ? old('cover_message') : '' }}</textarea>
-                                                    @if($isSubmittedCareer && $errors->has('cover_message'))
-                                                        <div class="invalid-feedback">{{ $errors->first('cover_message') }}</div>
-                                                    @endif
-                                                </div>
-
-                                                <div class="col-12 d-flex justify-content-end">
-                                                    <button type="submit" class="btn btn-primary rounded-pill px-4 py-2">{{ __('front.career_submit_application') }}</button>
-                                                </div>
-                                            </form>
+                                                <a href="{{ asset('downloads/template-cv-chalidana.docx') }}" class="btn btn-outline-primary rounded-pill px-4 py-2 flex-shrink-0" download>
+                                                    <span class="fa fa-download me-1"></span>
+                                                    {{ __('front.career_download_cv_template') }}
+                                                </a>
+                                            </div>
                                         </div>
                                     @else
                                         <div class="alert alert-light border mb-0">{{ __('front.career_closed_note') }}</div>

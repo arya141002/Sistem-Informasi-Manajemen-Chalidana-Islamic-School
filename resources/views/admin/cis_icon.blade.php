@@ -97,7 +97,7 @@
     <script>
         function imageUrl(filename) {
             if (!filename) return '';
-            return `/images/icon/${filename}`;
+            return `/public/images/icon/${filename}`;
         }
 
         let tableku = $('#cisicon-table').DataTable({

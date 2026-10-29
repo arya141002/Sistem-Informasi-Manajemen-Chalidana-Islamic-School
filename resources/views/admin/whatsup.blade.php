@@ -23,7 +23,6 @@
                                 <th>Image</th>
                                 <th>Category</th>
                                 <th>Date</th>
-                                <th>Slug</th>
                                 <th>Title</th>
                                 <th>Action</th>
                             </tr>
@@ -43,7 +42,7 @@
                 </div>
                 <div class="modal-body py-3 py-md-4">
                     <div class="row g-3">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label">Category</label>
                             <select class="form-select" id="add-news_id">
                                 <option value="">Select Category</option>
@@ -52,15 +51,11 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label">Date</label>
                             <input type="date" class="form-control" id="add-tanggal">
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Slug</label>
-                            <input type="text" class="form-control" id="add-slug">
-                        </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label">Image</label>
                             <input type="file" class="form-control" id="add-img" accept="image/*">
                         </div>
@@ -128,10 +123,6 @@
                             <input type="date" class="form-control" id="edit-tanggal">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Slug</label>
-                            <input type="text" class="form-control" id="edit-slug">
-                        </div>
-                        <div class="col-md-6">
                             <label class="form-label">Change Image</label>
                             <input type="file" class="form-control" id="edit-img" accept="image/*">
                         </div>
@@ -196,7 +187,7 @@
 
     <script>
         const editorStore = {};
-        function imageUrl(path) { return path ? `/images/whatsup/${path}` : ''; }
+        function imageUrl(path) { return path ? `/public/images/whatsup/${path}` : ''; }
 
         function initRichEditors() {
             document.querySelectorAll('.rich-editor').forEach((box) => {
@@ -259,7 +250,6 @@
                 { data: 'img', name: 'img', render: (d) => d ? `<img src="${imageUrl(d)}" class="img-thumbnail" style="height:52px;width:78px;object-fit:cover;">` : '-' },
                 { data: 'category.title', name: 'category.title', defaultContent: '-' },
                 { data: 'tanggal', name: 'tanggal', render: (d) => d ? d.substring(0, 10) : '-' },
-                { data: 'slug', name: 'slug' },
                 { data: 'title', name: 'title' },
                 { data: 'action', name: 'action', orderable: false, searchable: false }
             ]
@@ -270,7 +260,6 @@
             fd.append('_token', '{{ csrf_token() }}');
             fd.append('news_id', $('#add-news_id').val());
             fd.append('tanggal', $('#add-tanggal').val());
-            fd.append('slug', $('#add-slug').val());
             fd.append('title', $('#add-title').val());
             fd.append('title_id', $('#add-title_id').val());
             fd.append('content', $('#add-content').val());
@@ -304,7 +293,6 @@
                     $('#edit-id').val(r.id);
                     $('#edit-news_id').val(r.news_id);
                     $('#edit-tanggal').val(r.tanggal ? r.tanggal.substring(0, 10) : '');
-                    $('#edit-slug').val(r.slug);
                     $('#edit-title').val(r.title);
                     $('#edit-title_id').val(r.title_id);
                     setEditorValue('edit-content', r.content);
@@ -323,7 +311,6 @@
             fd.append('_token', '{{ csrf_token() }}');
             fd.append('news_id', $('#edit-news_id').val());
             fd.append('tanggal', $('#edit-tanggal').val());
-            fd.append('slug', $('#edit-slug').val());
             fd.append('title', $('#edit-title').val());
             fd.append('title_id', $('#edit-title_id').val());
             fd.append('content', $('#edit-content').val());

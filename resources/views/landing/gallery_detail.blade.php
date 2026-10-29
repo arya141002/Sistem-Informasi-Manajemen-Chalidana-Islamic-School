@@ -3,7 +3,7 @@
 @section('landing')
     @php
         $breadcrumbImageUrl = !empty($category->img)
-            ? asset('images/gallery/' . $category->img)
+            ? webp_asset('images/gallery/' . $category->img)
             : null;
     @endphp
 
@@ -43,7 +43,7 @@
             <div class="row g-4 mb-5">
                 @forelse($items as $index => $item)
                     @php
-                        $imageUrl = $item->img ? asset('images/gallery/detail/' . $item->img) : asset('landing/img/blog-1.png');
+                        $imageUrl = $item->img ? webp_asset('images/gallery/detail/' . $item->img) : webp_asset('landing/img/blog-1.png');
                     @endphp
                     <div class="col-sm-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="{{ number_format(0.2 + (($index % 6) * 0.08), 2) }}s">
                         <article class="bg-white rounded shadow-sm h-100 overflow-hidden">
@@ -85,11 +85,11 @@
                         @foreach($relatedCategories as $relatedCategory)
                             @php
                                 $relatedCover = $relatedCategory->galleries->first();
-                                $relatedImageUrl = $relatedCover?->img ? asset('images/gallery/detail/' . $relatedCover->img) : asset('landing/img/blog-1.png');
+                                $relatedImageUrl = $relatedCover?->img ? webp_asset('images/gallery/detail/' . $relatedCover->img) : webp_asset('landing/img/blog-1.png');
                             @endphp
                             <div class="col-md-6 col-xl-4">
                                 <article class="bg-white rounded shadow-sm h-100 overflow-hidden">
-                                    <a href="{{ route('landing.gallery.show', $relatedCategory->slug) }}" class="d-block">
+                                    <a href="{{ route('landing.gallery.show', $relatedCategory->slug) }}" class="d-block gallery-card-image-link">
                                         <img
                                             src="{{ $relatedImageUrl }}"
                                             alt="{{ localized_value($relatedCategory, 'title') }}"

@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\CISUpdate;
+use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Http\Request;
 
@@ -16,11 +18,14 @@ class CISUpdateController extends Controller
         $query = CISUpdate::latest()->get();
         return datatables()->of($query)
             ->addIndexColumn()
+            ->editColumn('img', function ($query) {
+                return '<img src="' . asset('storage/' . $query->img) . '" width="100" class="img-thumbnail rounded shadow-sm" alt="Logo">';
+            })
             ->addColumn('action', function ($query){
                 return '<button class="btn btn-sm btn-primary edit-btn" onclick="editcisupdate(' . $query->id . ')"><i class="bx bx-edit"></i></button> ' .
                     '<button class="btn btn-sm btn-danger delete-btn" onclick="deletecisupdate(' . $query->id . ')"><i class="bx bx-trash"></i></button>';
             })
-        ->rawColumns(['action'])
+        ->rawColumns(['action', 'img'])
         ->make(true);
     }
 
@@ -92,6 +97,12 @@ class CISUpdateController extends Controller
 
     public function destroy($id){
         $cisupdate = CISUpdate::findOrFail($id);
+
+        // Hapus file gambar dari storage sebelum menghapus data dari database
+        if ($cisupdate->img && Storage::disk('public')->exists($cisupdate->img)) {
+            Storage::disk('public')->delete($cisupdate->img);
+        }
+
         $cisupdate->delete();
 
         return response()->json(['message' => 'CIS Update deleted successfully']);

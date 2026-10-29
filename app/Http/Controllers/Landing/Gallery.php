@@ -35,21 +35,15 @@ class Gallery extends Controller
     {
         $categories = GalleryCategory::query()
             ->withCount('galleries')
-            ->with([
-                'galleries' => fn ($query) => $query
-                    ->select('id', 'img_id', 'img', 'title', 'title_id')
-                    ->latest()
-                    ->take(1),
-            ])
-            ->orderBy('title')
+            ->latest('id') // Atau ->latest('created_at') jika ingin kategori terbarunya berdasarkan tanggal buat
             ->get(['id', 'title', 'title_id', 'slug', 'img', 'location']);
-
+    
         return view('landing.gallery', array_merge(
             $this->sharedData(),
             compact('categories')
         ));
     }
-
+    
     public function show(string $slug)
     {
         $category = GalleryCategory::query()

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\GalleryCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class GalleryCategoryController extends Controller
 {
@@ -27,18 +28,29 @@ class GalleryCategoryController extends Controller
             ->make(true);
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         $request->validate([
             'study_id' => 'required|integer',
-            'title' => 'required|string|max:255',
+            'title'    => 'required|string|max:255',
             'title_id' => 'required|string|max:255',
-            'slug' => 'required|string|max:200|unique:studies,slug',
-            'img' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'img'      => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'location' => 'required|string|max:200',
         ]);
-
-        $data = $request->only(['study_id', 'title', 'title_id', 'slug', 'location']);
+    
+        // Ambil input dasar
+        $data = $request->only(['study_id', 'title', 'title_id', 'location']);
+    
+        // 1. Generate slug otomatis
+        $slug = Str::slug($request->title);
+        $originalSlug = $slug;
+        $count = 1;
+    
+        while (GalleryCategory::where('slug', $slug)->exists()) {
+            $slug = "{$originalSlug}-{$count}";
+            $count++;
+        }
+        $data['slug'] = $slug;
+    
         if ($request->hasFile('img')) {
             $destinationPath = public_path('images/gallery');
             if (!File::exists($destinationPath)) {
@@ -48,8 +60,9 @@ class GalleryCategoryController extends Controller
             $request->file('img')->move($destinationPath, $imageName);
             $data['img'] = $imageName;
         }
-
+    
         GalleryCategory::create($data);
+    
         return response()->json(['message' => 'Gallery category created successfully']);
     }
 

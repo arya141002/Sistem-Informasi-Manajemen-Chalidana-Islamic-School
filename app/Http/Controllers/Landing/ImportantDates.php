@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Campus;
 use App\Models\CampusArea;
 use App\Models\ImportantDateEvent;
+use App\Support\IndonesiaHolidayCalendar;
 use App\Models\Tagline;
 use Illuminate\Http\Request;
 
@@ -81,6 +82,7 @@ class ImportantDates extends Controller
                     'branch' => $event->branch?->name,
                 ];
             })
+            ->concat(IndonesiaHolidayCalendar::eventsForMonth((int) $validated['year'], (int) $validated['month']))
             ->values();
 
         return response()->json($events);

@@ -25,10 +25,11 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request)
     {
         $request->authenticate();
+        $request->session()->regenerate();
 
         $user = Auth::user()->load('role');
 
-        if (! $user->role) {
+        if (! $user->role && $request->expectsJson()) {
             Auth::guard('web')->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
@@ -39,17 +40,26 @@ class AuthenticatedSessionController extends Controller
             ], 403);
         }
 
-        $redirect = $this->redirectByRole($user->role->name);
+        if ($user->account_type === 'parent') {
+            return redirect()->intended(route('parent.dashboard'));
+        }
 
-        $request->session()->regenerate();
-        $request->session()->put('user_role', $user->role->name);
+        $roleName = $user->role?->name;
+        $redirect = $this->redirectByRole($roleName ?? 'user');
+        if ($roleName) {
+            $request->session()->put('user_role', $roleName);
+        }
 
-        return response()->json([
-            'success' => true,
-            'redirect' => $redirect,
-            'message' => 'Login successful',
-            'role' => $user->role->name,
-        ]);
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'redirect' => $redirect,
+                'message' => 'Login successful',
+                'role' => $roleName,
+            ]);
+        }
+
+        return redirect()->intended($redirect);
     }
 
     /**

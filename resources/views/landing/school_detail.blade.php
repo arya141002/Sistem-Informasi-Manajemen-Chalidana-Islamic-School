@@ -38,16 +38,23 @@
         if (!$campusMapUrl && !empty($campus->address)) {
             $campusMapUrl = 'https://www.google.com/maps/search/?api=1&query=' . urlencode(strip_tags($campus->address));
         }
+
+        $campusHeaderImage = null;
+        if (!empty($campus->img_header)) {
+            $campusHeaderImage = asset('images/campuses/' . $campus->img_header);
+        }
     @endphp
 
-    <div class="container-fluid bg-breadcrumb">
-        <div class="container text-center py-5 page-title-container">
-            <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">{{ $campusTitle }}</h4>
-            <ol class="breadcrumb d-flex justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
-                <li class="breadcrumb-item"><a href="{{ url('/') }}">{{ __('front.breadcrumb_home') }}</a></li>
-                <li class="breadcrumb-item"><a href="#">{{ __('front.school') }}</a></li>
-                <li class="breadcrumb-item active text-primary">{{ $campusTitle }}</li>
-            </ol>
+    <div class="container-fluid bg-breadcrumb bg-breadcrumb-campus-detail" @if($campusHeaderImage) style="background-image: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 60%, rgba(1, 95, 201, 0.9) 100%), url('{{ $campusHeaderImage }}');" @endif>
+        <div class="container-fluid page-title-corner py-5 page-title-container text-start">
+            <div class="container">
+                <h4 class="text-white display-4 mb-2 text-nowrap wow fadeInDown" data-wow-delay="0.1s">{{ $campusTitle }}</h4>
+                <ol class="breadcrumb d-flex justify-content-start mb-0 wow fadeInDown" data-wow-delay="0.3s">
+                    <li class="breadcrumb-item"><a href="{{ url('/') }}">{{ __('front.breadcrumb_home') }}</a></li>
+                    <li class="breadcrumb-item"><a href="#">{{ __('front.school') }}</a></li>
+                    <li class="breadcrumb-item active text-primary">{{ $campusTitle }}</li>
+                </ol>
+            </div>
         </div>
     </div>
 
@@ -81,7 +88,7 @@
                     <div class="col-lg-6">
                         <div class="school-detail-media wow fadeInUp" data-wow-delay="0.3s">
                             @if($campus->img_header)
-                                <img src="{{ asset('images/campuses/' . $campus->img_header) }}" alt="{{ $campusTitle }}">
+                                <img src="{{ webp_asset('images/campuses/' . $campus->img_header) }}" alt="{{ $campusTitle }}">
                             @else
                                 <div class="school-detail-placeholder">{{ $campusTitle }}</div>
                             @endif
@@ -125,13 +132,12 @@
                     </div>
                 </div>
             </section>
-
             <section class="school-detail-section mb-5">
                 <div class="row g-4 align-items-stretch">
                     <div class="col-lg-5">
                         <div class="school-detail-principal-media wow fadeInUp" data-wow-delay="0.2s">
                             @if($campus->img_principal)
-                                <img src="{{ asset('images/campuses/' . $campus->img_principal) }}" alt="{{ $principalTitle }}">
+                                <img src="{{ webp_asset('images/campuses/' . $campus->img_principal) }}" alt="{{ $principalTitle }}">
                             @else
                                 <div class="school-detail-placeholder">{{ $principalTitle }}</div>
                             @endif
@@ -169,7 +175,7 @@
                                     <article class="school-team-card">
                                         <div class="school-team-card__media">
                                             <img
-                                                src="{{ $member->img ? asset('images/teachernstaff/' . $member->img) : asset('landing/img/team-1.jpg') }}"
+                                                src="{{ $member->img ? webp_asset('images/teachernstaff/' . $member->img) : webp_asset('landing/img/team-1.jpg') }}"
                                                 alt="{{ strip_tags($member->content) }}"
                                             >
                                         </div>
@@ -184,7 +190,7 @@
                 @endif
             @endforeach
 
-            @if($campus->facilities->isNotEmpty())
+           @if($campus->facilities->isNotEmpty())
                 <section class="school-detail-section mb-5">
                     <div class="mb-4 wow fadeInUp" data-wow-delay="0.2s">
                         <span class="school-detail-eyebrow">{{ __('front.campus_facilities') }}</span>
@@ -193,18 +199,28 @@
                     <div class="row g-4">
                         @foreach($campus->facilities as $index => $facility)
                             <div class="col-md-6 col-xl-4 wow fadeInUp" data-wow-delay="{{ number_format(0.2 + ($index * 0.1), 1) }}s">
-                                <article class="school-facility-card">
+                                <article class="school-facility-card position-relative overflow-hidden rounded-4">
+                                    <!-- Gambar Facility -->
                                     <div class="school-facility-card__media">
                                         <img
-                                            src="{{ $facility->img ? asset('images/facility/' . $facility->img) : asset('landing/img/blog-1.png') }}"
+                                            src="{{ $facility->img ? webp_asset('images/facility/' . $facility->img) : webp_asset('landing/img/blog-1.png') }}"
                                             alt="{{ localized_value($facility, 'title', __('front.campus_facilities')) }}"
+                                            class="w-100 object-fit-cover d-block"
+                                            style="height: 240px;"
                                         >
                                     </div>
-                                    <div class="school-facility-card__body">
-                                        <h3>{{ localized_value($facility, 'title', __('front.campus_facilities')) }}</h3>
-                                        <div class="school-facility-card__content">
-                                            {!! localized_value($facility, 'content', '') !!}
-                                        </div>
+                                    
+                                    <!-- Overlay background gradasi gelap & Teks -->
+                                    <div class="school-facility-card__overlay position-absolute bottom-0 start-0 w-100 p-3 pt-5"
+                                         style="background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);">
+                                        <h3 class="h6 text-white fw-semibold mb-0">
+                                            {{ localized_value($facility, 'title', __('front.campus_facilities')) }}
+                                        </h3>
+                                        @if(localized_value($facility, 'content'))
+                                            <div class="school-facility-card__content small text-white-50 mt-1">
+                                                {!! localized_value($facility, 'content') !!}
+                                            </div>
+                                        @endif
                                     </div>
                                 </article>
                             </div>
@@ -214,7 +230,7 @@
             @endif
 
             @if($campusMapSource || $campusMapUrl)
-                <section class="school-detail-section">
+                <section class="school-detail-section mb-4">
                     <div class="row g-4 align-items-stretch">
                         <div class="col-lg-4">
                             <article class="school-detail-panel h-100 wow fadeInUp" data-wow-delay="0.2s">
@@ -255,6 +271,23 @@
                     </div>
                 </section>
             @endif
+            <section class="school-detail-section mb-2">
+                <div class="p-4 bg-light rounded-4 border text-center wow fadeInUp" data-wow-delay="0.2s">
+                    <span class="school-detail-eyebrow d-block mb-1">{{ __('front.registration_info') }}</span>
+                    <h3 class="h4 mb-3">{{ __('front.download_school_brochure') }}</h3>
+                    <div class="d-flex justify-content-center flex-wrap gap-3 mt-3">
+                        <a href="{{ asset('brosur/E-Brochure_CIS_Malang_2024_2025.pdf') }}" class="btn btn-primary rounded-pill px-4 py-2" target="_blank">
+                            <i class="fa fa-file-pdf me-2"></i>{{ __('front.brochure') }} CIS Malang
+                        </a>
+                        <a href="{{ asset('brosur/E-Brosur_CIS_Menganti_2024-2025.pdf') }}" class="btn btn-primary rounded-pill px-4 py-2" target="_blank">
+                            <i class="fa fa-file-pdf me-2"></i>{{ __('front.brochure') }} CIS Gresik
+                        </a>
+                        <a href="{{ asset('brosur/E-Brosur_CIS_Juanda_2024-2025.pdf') }}" class="btn btn-primary rounded-pill px-4 py-2" target="_blank">
+                            <i class="fa fa-file-pdf me-2"></i>{{ __('front.brochure') }} CIS Sidoarjo
+                        </a>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
 @endsection

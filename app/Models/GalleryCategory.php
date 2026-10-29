@@ -20,4 +20,9 @@ class GalleryCategory extends Model
     {
         return $this->hasMany(Gallery::class, 'img_id', 'id');
     }
+
+    public function latestGallery()
+    {
+        return $this->hasOne(Gallery::class, 'img_id', 'id')->latestOfMany();
+    }
 }

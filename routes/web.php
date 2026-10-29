@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ParentAdmissionApplicationController;
+use App\Http\Controllers\ParentAuthController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SystemSettingsController;
@@ -34,6 +36,7 @@ use App\Http\Controllers\CareerController;
 
 //Landing
 use App\Http\Controllers\Landing\Index;
+use App\Http\Controllers\Landing\Admission as LandingAdmission;
 use App\Http\Controllers\Landing\About;
 use App\Http\Controllers\Landing\CisInNumber as LandingCisInNumber;
 use App\Http\Controllers\Landing\CISIcon as LandingCISIcon;
@@ -60,6 +63,7 @@ Route::get('/locale/{locale}', function (string $locale) {
 })->name('locale.switch');
 
 Route::get('/', [Index::class, 'index']);
+Route::get('/admission', [LandingAdmission::class, 'index'])->name('landing.admission');
 Route::get('/about-us', [About::class, 'index']);
 Route::get('/curricula', [LandingCurricula::class, 'index'])->name('landing.curricula');
 Route::get('/school-history', [LandingSchoolHistory::class, 'index'])->name('landing.school-history');
@@ -89,13 +93,45 @@ Route::get('/{section}', [LandingWhatsUp::class, 'index'])
 Route::get('/testimonials', [LandingTestimonial::class, 'index'])->name('landing.testimonials');
 Route::get('/school/{slug}', [LandingCampusDetail::class, 'show'])->name('landing.school.show');
 
+Route::middleware('guest')->group(function () {
+    Route::get('/parent/login', [ParentAuthController::class, 'showLogin'])->name('parent.login');
+    Route::post('/parent/login', [ParentAuthController::class, 'login'])->name('parent.login.store');
+    Route::get('/parent/register', [ParentAuthController::class, 'showRegister'])->name('parent.register');
+    Route::post('/parent/register', [ParentAuthController::class, 'register'])->name('parent.register.store');
+    Route::get('/parent/auth/google', [ParentAuthController::class, 'redirectToGoogle'])->name('parent.google.redirect');
+    Route::get('/parent/auth/google/callback', [ParentAuthController::class, 'handleGoogleCallback'])->name('parent.google.callback');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/parent/dashboard', function () {
+        abort_unless(auth()->user()->account_type === 'parent', 403);
+        $application = \App\Models\AdmissionApplication::query()
+            ->where('user_id', auth()->id())
+            ->latest('id')
+            ->first();
+
+        return view('parent.dashboard', compact('application'));
+    })->name('parent.dashboard');
+    Route::get('/parent/application', [ParentAdmissionApplicationController::class, 'edit'])->name('parent.application.edit');
+    Route::post('/parent/application', [ParentAdmissionApplicationController::class, 'store'])->name('parent.application.store');
+    Route::get('/parent/application/health', [ParentAdmissionApplicationController::class, 'editHealth'])->name('parent.application.health.edit');
+    Route::post('/parent/application/health', [ParentAdmissionApplicationController::class, 'storeHealth'])->name('parent.application.health.store');
+    Route::post('/parent/logout', [ParentAuthController::class, 'logout'])->name('parent.logout');
+});
+
 
 
 Route::get('/dashboard', function () {
+    if (auth()->user()?->account_type === 'parent') {
+        return redirect()->route('parent.dashboard');
+    }
+
     return view('admin/dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/tes-ppdb', fn () => 'ok dari laravel');
+    Route::get('/ppdb/tes/download', fn () => 'ok download');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -110,6 +146,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/menu/{id}', [MenuController::class, 'edit'])->name('menu.edit');
     Route::put('/menu/{id}', [MenuController::class, 'update'])->name('menu.update');
     Route::delete('/menu/{id}', [MenuController::class, 'destroy'])->name('menu.destroy');
+
+    Route::get('/admin/ppdb', [ParentAdmissionApplicationController::class, 'indexAdmin'])->name('ppdb.index');
+    Route::get('/ppdb/download', [ParentAdmissionApplicationController::class, 'downloadCsv'])->name('ppdb.download');
+    Route::get('/ppdb/{id}', [ParentAdmissionApplicationController::class, 'showAdmin'])->name('ppdb.show');
+    Route::get('/admin/ppdb/{id}/download', [ParentAdmissionApplicationController::class, 'downloadPdf'])->name('ppdb.pdf');
+    Route::get('/admin/ppdb/{id}/health-pdf', [ParentAdmissionApplicationController::class, 'downloadHealthPdf'])->name('ppdb.health.pdf');
+    Route::view('/tuition-fee', 'admin.tuition_fee')->name('tuition-fee.index');
 
     //Role Management
     Route::get('/role', [RoleController::class, 'index'])->name('role.index');

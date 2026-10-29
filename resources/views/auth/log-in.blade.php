@@ -14,12 +14,12 @@
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>Login Basic - Pages | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>Login Admin | Chalidana Islamic School</title>
 
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/icons/CIS_Branding_logo.png') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ webp_asset('assets/img/icons/CIS_Branding_Logo.png') }}" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -59,15 +59,18 @@
             <div class="card-body">
               <!-- Logo -->
               <div class="app-brand justify-content-center">
-                <a href="index.html" class="app-brand-link gap-2">
-                  <img src="{{ asset('assets/img/icons/CIS_Branding_Logo.png') }}" width="50%" alt="">
+                <a href="{{ url('/') }}" class="app-brand-link gap-2">
+                  <img src="{{ webp_asset('images/icon/logo-branding-CIS-01.png') }}" width="50%" alt="Chalidana Islamic School">
                   {{-- <div class="demo text-body fw-bolder">{{ config('app.name') }}</div> --}}
                 </a>
               </div>
               <!-- /Logo -->
               <p class="mb-4">Please sign-in to your account</p>
 
-              <form id="formAuthentication" class="mb-3" action="index.html" method="POST">
+              <form id="formAuthentication" class="mb-3" action="{{ route('login') }}" method="POST">
+                @if(session('status'))
+                  <div class="alert alert-success">{{ session('status') }}</div>
+                @endif
                 <div class="mb-3">
                   <label for="email" class="form-label">Email or Username</label>
                   <input
@@ -82,7 +85,7 @@
                 <div class="mb-3 form-password-toggle">
                   <div class="d-flex justify-content-between">
                     <label class="form-label" for="password">Password</label>
-                    <a href="auth-forgot-password-basic.html">
+                    <a href="{{ route('password.request') }}">
                       <small>Forgot Password?</small>
                     </a>
                   </div>

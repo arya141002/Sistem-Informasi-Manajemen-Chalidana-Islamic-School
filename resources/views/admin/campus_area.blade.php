@@ -158,7 +158,7 @@
 
         function imageUrl(path) {
             if (!path) return '';
-            return `{{ asset('images/campus_area') }}/${path}`;
+            return `{{ webp_asset('/images/campus_area') }}/${path}`;
         }
 
         function renderAddress(value) {

@@ -35,7 +35,6 @@
                 <div class="modal-body py-3 py-md-4">
                     <div class="row g-3">
                         <div class="col-md-6"><label class="form-label">Study ID</label><input type="number" class="form-control" id="add-study_id"></div>
-                        <div class="col-md-6"><label class="form-label">Slug</label><input type="text" class="form-control" id="add-slug"></div>
                         <div class="col-md-6"><label class="form-label">Title (EN)</label><input type="text" class="form-control" id="add-title"></div>
                         <div class="col-md-6"><label class="form-label">Title (ID)</label><input type="text" class="form-control" id="add-title_id"></div>
                         <div class="col-md-6"><label class="form-label">Location</label><input type="text" class="form-control" id="add-location"></div>
@@ -61,7 +60,6 @@
                     <input type="hidden" id="edit-id">
                     <div class="row g-3">
                         <div class="col-md-6"><label class="form-label">Study ID</label><input type="number" class="form-control" id="edit-study_id"></div>
-                        <div class="col-md-6"><label class="form-label">Slug</label><input type="text" class="form-control" id="edit-slug"></div>
                         <div class="col-md-6"><label class="form-label">Title (EN)</label><input type="text" class="form-control" id="edit-title"></div>
                         <div class="col-md-6"><label class="form-label">Title (ID)</label><input type="text" class="form-control" id="edit-title_id"></div>
                         <div class="col-md-6"><label class="form-label">Location</label><input type="text" class="form-control" id="edit-location"></div>
@@ -90,7 +88,7 @@
     </div>
 
     <script>
-        function imageUrl(path) { return path ? `/images/gallery/${path}` : ''; }
+        function imageUrl(path) { return path ? `/public/images/gallery/${path}` : ''; }
         function formatValidationErrors(xhr, fallback) {
             if (xhr.responseJSON && xhr.responseJSON.errors) {
                 const messages = [];
@@ -118,7 +116,6 @@
             const fd = new FormData();
             fd.append('_token', '{{ csrf_token() }}');
             fd.append('study_id', $('#add-study_id').val());
-            fd.append('slug', $('#add-slug').val());
             fd.append('title', $('#add-title').val());
             fd.append('title_id', $('#add-title_id').val());
             fd.append('location', $('#add-location').val());
@@ -168,7 +165,6 @@
             fd.append('_method', 'PUT');
             fd.append('_token', '{{ csrf_token() }}');
             fd.append('study_id', $('#edit-study_id').val());
-            fd.append('slug', $('#edit-slug').val());
             fd.append('title', $('#edit-title').val());
             fd.append('title_id', $('#edit-title_id').val());
             fd.append('location', $('#edit-location').val());

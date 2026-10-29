@@ -10,18 +10,20 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::table('menus', function (Blueprint $table) {
-        // Tambahkan kolom icon setelah kolom title
-        $table->string('icon')->nullable()->after('title');
-    });
-}
+    {
+        if (!Schema::hasColumn('menus', 'icon')) {
+            Schema::table('menus', function (Blueprint $table) {
+                $table->string('icon')->nullable()->after('title');
+            });
+        }
+    }
 
-public function down(): void
-{
-    Schema::table('menus', function (Blueprint $table) {
-        // Hapus kolom jika migration di-rollback
-        $table->dropColumn(['icon']);
-    });
-}
+    public function down(): void
+    {
+        if (Schema::hasColumn('menus', 'icon')) {
+            Schema::table('menus', function (Blueprint $table) {
+                $table->dropColumn(['icon']);
+            });
+        }
+    }
 };

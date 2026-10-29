@@ -1,10 +1,10 @@
 @extends('layouts.front')
 
 @section('landing')
-    <div class="container-fluid bg-breadcrumb">
-        <div class="container text-center py-5 page-title-container">
+    <div class="container-fluid bg-breadcrumb bg-breadcrumb-gallery">
+        <div class="container page-title-corner py-5 page-title-container text-center text-lg-end">
             <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">{{ __('front.gallery') }}</h4>
-            <ol class="breadcrumb d-flex justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
+            <ol class="breadcrumb d-flex justify-content-center justify-content-lg-end mb-0 wow fadeInDown" data-wow-delay="0.3s">
                 <li class="breadcrumb-item"><a href="{{ url('/') }}">{{ __('front.breadcrumb_home') }}</a></li>
                 <li class="breadcrumb-item active text-primary">{{ __('front.gallery') }}</li>
             </ol>
@@ -34,11 +34,11 @@
                 @forelse($categories as $index => $category)
                     @php
                         $coverImage = $category->galleries->first();
-                        $imageUrl = $coverImage?->img ? asset('images/gallery/detail/' . $coverImage->img) : asset('landing/img/blog-1.png');
+                        $imageUrl = $coverImage?->img ? webp_asset('images/gallery/detail/' . $coverImage->img) : webp_asset('landing/img/blog-1.png');
                     @endphp
                     <div class="col-md-6 col-xl-4 wow fadeInUp" data-wow-delay="{{ number_format(0.2 + (($index % 6) * 0.08), 2) }}s">
                         <article class="bg-white rounded shadow-sm h-100 overflow-hidden">
-                            <a href="{{ route('landing.gallery.show', $category->slug) }}" class="d-block">
+                            <a href="{{ route('landing.gallery.show', $category->slug) }}" class="d-block gallery-card-image-link">
                                 <img
                                     src="{{ $imageUrl }}"
                                     alt="{{ localized_value($category, 'title') }}"

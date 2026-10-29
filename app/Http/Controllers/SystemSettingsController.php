@@ -20,6 +20,7 @@ class SystemSettingsController extends Controller
             'contact_email' => get_system('contact_email', ''),
             'contact_phone' => get_system('contact_phone', ''),
             'site_favicon' => get_system('site_favicon'),
+            'site_logo' => get_system('site_logo'),
         ];
 
         return view('admin.settings', compact('title', 'settings'));
@@ -35,6 +36,7 @@ class SystemSettingsController extends Controller
             'contact_email' => 'nullable|email|max:255',
             'contact_phone' => 'nullable|string|max:50',
             'site_favicon' => 'nullable|image|mimes:png,jpg,jpeg,webp,ico|max:2048',
+            'site_logo' => 'nullable|image|mimes:png,jpg,jpeg,svg|max:2048',
         ]);
 
         set_system('site_name', $validated['site_name'] ?? null, 'general');
@@ -56,6 +58,20 @@ class SystemSettingsController extends Controller
             $file->storeAs('systems', $filename, 'public');
 
             set_system('site_favicon', $filename, 'appearance');
+        }
+
+        if ($request->hasFile('site_logo')) {
+            $existingLogo = get_system('site_logo');
+
+            if ($existingLogo && Storage::disk('public')->exists('systems/' . $existingLogo)) {
+                Storage::disk('public')->delete('systems/' . $existingLogo);
+            }
+
+            $file = $request->file('site_logo');
+            $filename = 'logo-' . time() . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('systems', $filename, 'public');
+
+            set_system('site_logo', $filename, 'appearance');
         }
 
         return redirect()->route('settings.index')->with('success', 'System settings berhasil diperbarui.');

@@ -31,31 +31,31 @@ class SchoolLeadership extends Controller
                 'name' => 'M. Yunus Chalidana',
                 'organization_key' => 'front.leadership_organization_ilyas_safira_foundation',
                 'position_key' => 'front.leadership_position_chairman',
-                'image' => asset('landing/img/User-Default.png'),
+                'image' => webp_asset('landing/img/Mr-Yunus.png'),
             ],
             [
                 'name' => 'Jamaludin',
                 'organization_key' => 'front.leadership_organization_chalidana_islamic_school',
                 'position_key' => 'front.leadership_position_managing_director',
-                'image' => asset('landing/img/Mr-Jamal.jpg'),
+                'image' => webp_asset('landing/img/Mr-Jamal.jpeg?v=999'),
             ],
             [
                 'name' => 'Yudi Iskandar Atmaja',
                 'organization_key' => 'front.leadership_organization_chalidana_islamic_school',
                 'position_key' => 'front.leadership_position_head_of_hrd',
-                'image' => asset('landing/img/User-Default.png'),
+                'image' => webp_asset('landing/img/Mr-Yudi.png'),
             ],
             [
                 'name' => 'Dodo Hidra Laksmono',
                 'organization_key' => 'front.leadership_organization_chalidana_islamic_school',
                 'position_key' => 'front.leadership_position_public_relations',
-                'image' => asset('landing/img/Mr-Dodo.jpg'),
+                'image' => webp_asset('landing/img/Mr-Dodo.jpg'),
             ],
             [
                 'name' => 'Arya Dhiva Handy',
                 'organization_key' => 'front.leadership_organization_chalidana_islamic_school',
                 'position_key' => 'front.leadership_position_head_of_web_development',
-                'image' => asset('landing/img/Arya-dhiva.jpg'),
+                'image' => webp_asset('landing/img/Arya-dhiva.jpg'),
             ],
         ];
 

@@ -11,10 +11,14 @@ class Menu extends Model
 {
     protected $fillable = ['parent_id', 'title', 'icon', 'url', 'role_access', 'order', 'is_active'];
 
+    protected $casts = [
+        'role_access' => 'array',
+    ];
+
     public function roles(): BelongsToMany
     {
         // Pastikan nama tabel pivotnya 'role_menu' sesuai yang kita buat tadi
-        return $this->belongsToMany(Role::class, 'roles');
+        return $this->belongsToMany(Role::class, 'role_menu');
     }
 
     // Relasi untuk mengambil anak-anaknya (Submenu)

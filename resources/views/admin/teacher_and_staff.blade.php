@@ -221,7 +221,7 @@
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                 { data: 'img', name: 'img', render: function(data) {
-                    return '<img src="/images/teachernstaff/' + data + '" alt="Image" width="100">';
+                    return '<img src="/public/images/teachernstaff/' + data + '" alt="Image" width="100">';
                 }},
                 { data: 'campus.title', name: 'campus.title' },
                 { data: 'content', name: 'content', render: function(data) { return data || ''; } },

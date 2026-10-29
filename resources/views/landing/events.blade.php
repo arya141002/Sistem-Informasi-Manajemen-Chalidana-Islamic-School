@@ -1,10 +1,10 @@
 @extends('layouts.front')
 
 @section('landing')
-    <div class="container-fluid bg-breadcrumb">
-        <div class="container text-center py-5 page-title-container">
+    <div class="container-fluid bg-breadcrumb bg-breadcrumb-events">
+        <div class="container page-title-corner py-5 page-title-container text-start">
             <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">{{ __('front.events') }}</h4>
-            <ol class="breadcrumb d-flex justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
+            <ol class="breadcrumb d-flex justify-content-start mb-0 wow fadeInDown" data-wow-delay="0.3s">
                 <li class="breadcrumb-item"><a href="{{ url('/') }}">{{ __('front.breadcrumb_home') }}</a></li>
                 <li class="breadcrumb-item active text-primary">{{ __('front.events') }}</li>
             </ol>
@@ -43,7 +43,7 @@
                         <article class="blog-item h-100 shadow-sm">
                             <div class="blog-img">
                                 <img
-                                    src="{{ $event->img ? asset('images/events/' . $event->img) : asset('landing/img/blog-1.png') }}"
+                                    src="{{ $event->img ? webp_asset('images/events/' . $event->img) : webp_asset('landing/img/blog-1.png') }}"
                                     class="img-fluid rounded-top w-100 landing-card-image"
                                     alt="{{ localized_value($event, 'title') }}"
                                 >

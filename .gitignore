@@ -13,6 +13,9 @@
 /.zed
 /auth.json
 /node_modules
+/ppdb
+/ramadhan
+/open-day
 /public/build
 /public/hot
 /public/storage

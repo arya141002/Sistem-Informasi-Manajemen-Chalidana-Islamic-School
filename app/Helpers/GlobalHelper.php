@@ -98,3 +98,62 @@ if (!function_exists('get_system_file')) {
         return $default ? asset($default) : asset($value);
     }
 }
+
+if (!function_exists('webp_asset')) {
+    function webp_asset(?string $path, ?string $fallback = null): string
+    {
+        $path = $path ?: $fallback;
+
+        if (empty($path)) {
+            return '';
+        }
+
+        if (filter_var($path, FILTER_VALIDATE_URL)) {
+            return $path;
+        }
+
+        $normalizedPath = ltrim($path, '/');
+        $extension = strtolower(pathinfo($normalizedPath, PATHINFO_EXTENSION));
+
+        if (in_array($extension, ['jpg', 'jpeg', 'png'], true)) {
+            $webpPath = preg_replace('/\.[^.]+$/', '.webp', $normalizedPath);
+
+            if ($webpPath && file_exists(public_path($webpPath))) {
+                return asset($webpPath);
+            }
+        }
+
+        return asset($normalizedPath);
+    }
+}
+
+if (!function_exists('safe_rich_text')) {
+    /**
+     * Render HTML terbatas dengan whitelist tag sederhana.
+     */
+    function safe_rich_text($value): string
+    {
+        $html = (string) ($value ?? '');
+        if ($html === '') {
+            return '';
+        }
+
+        $html = str_replace(['‹', '›'], ['<', '>'], $html);
+
+        // Jika tersimpan sebagai entity (&lt;br&gt;), decode dulu agar tag valid bisa dirender.
+        $html = html_entity_decode($html, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        $clean = strip_tags($html, '<p><br><strong><b><em><i><ul><ol><li><a>');
+
+        // Hapus atribut event handler seperti onclick, onerror, dll.
+        $clean = preg_replace('/\son\w+\s*=\s*("|\').*?\1/iu', '', $clean) ?? $clean;
+        $clean = preg_replace('/\son\w+\s*=\s*[^\s>]+/iu', '', $clean) ?? $clean;
+
+        // Netralisir javascript: pada href.
+        $clean = preg_replace('/href\s*=\s*("|\')\s*javascript:[^"\']*\1/iu', 'href="#"', $clean) ?? $clean;
+        $clean = preg_replace('/href\s*=\s*javascript:[^\s>]*/iu', 'href="#"', $clean) ?? $clean;
+        $clean = preg_replace('/<a\b(?![^>]*\brel=)([^>]*\btarget\s*=\s*("|\')_blank\2[^>]*)>/iu', '<a$1 rel="noopener noreferrer">', $clean) ?? $clean;
+
+        return $clean;
+    }
+}

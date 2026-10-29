@@ -196,7 +196,7 @@
 
     <script>
         const editorStore = {};
-        function imageUrl(path) { return path ? `/images/achievement/${path}` : ''; }
+        function imageUrl(path) { return path ? `/public/images/achievement/${path}` : ''; }
 
         function initRichEditors() {
             document.querySelectorAll('.rich-editor').forEach((box) => {

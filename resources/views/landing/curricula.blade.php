@@ -1,9 +1,9 @@
 @extends('layouts.front')
 
 @section('landing')
-    <div class="container-fluid bg-breadcrumb">
+    <div class="container-fluid bg-breadcrumb bg-breadcrumb-curricula">
         <div class="container text-center py-5 page-title-container">
-            <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">{{ __('front.curricula') }}</h4>
+            <h4 class="text-white display-4 mb-0 wow fadeInDown" data-wow-delay="0.1s">{{ __('front.curricula') }}</h4>
             <ol class="breadcrumb d-flex justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
                 <li class="breadcrumb-item"><a href="{{ url('/') }}">{{ __('front.breadcrumb_home') }}</a></li>
                 <li class="breadcrumb-item active text-primary">{{ __('front.curricula') }}</li>

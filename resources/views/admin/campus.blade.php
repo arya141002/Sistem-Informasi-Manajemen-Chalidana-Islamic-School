@@ -162,7 +162,7 @@
 
     <script>
         const editorStore = {};
-        function imageUrl(name) { return name ? `/images/campuses/${name}` : ''; }
+        function imageUrl(name) { return name ? `/public/images/campuses/${name}` : ''; }
 
         function initRichEditors() {
             document.querySelectorAll('.rich-editor').forEach((box) => {
