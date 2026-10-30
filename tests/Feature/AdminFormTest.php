@@ -3,10 +3,12 @@
 namespace Tests\Feature;
 
 use App\Models\Campus;
+use App\Models\AdmissionApplication;
 use App\Models\Menu;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
@@ -111,6 +113,38 @@ class AdminFormTest extends TestCase
 
         $response->assertUnprocessable()
             ->assertJsonValidationErrors('parent_id');
+    }
+
+    public function test_non_administrative_users_cannot_access_admission_records(): void
+    {
+        $role = Role::create([
+            'name' => 'teacher',
+            'display_name' => 'Teacher',
+        ]);
+        $user = User::factory()->create(['role_id' => $role->id]);
+        $application = AdmissionApplication::create([
+            'user_id' => User::factory()->create()->id,
+            'registration_code' => 'REG-SECURITY-001',
+            'full_name' => 'Student',
+        ]);
+
+        $this->actingAs($user)
+            ->getJson(route('ppdb.show', $application->id))
+            ->assertForbidden();
+    }
+
+    public function test_registration_rejects_executable_uploads(): void
+    {
+        $parent = User::factory()->create(['account_type' => 'parent']);
+        $campus = $this->createCampus();
+
+        $response = $this->actingAs($parent)->post(route('parent.application.store'), [
+            'campus_id' => $campus->id,
+            'action' => 'save',
+            'father_id_card' => UploadedFile::fake()->create('payload.php', 10, 'application/x-php'),
+        ]);
+
+        $response->assertSessionHasErrors('father_id_card');
     }
 
     private function createCampus(string $slug = 'main-campus', string $title = 'Main Campus'): Campus

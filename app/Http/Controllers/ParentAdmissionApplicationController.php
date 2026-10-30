@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\File as FileRule;
 
 class ParentAdmissionApplicationController extends Controller
 {
@@ -91,15 +92,8 @@ class ParentAdmissionApplicationController extends Controller
     {
         ini_set('memory_limit', '512M');
     
-        $user = auth()->user();
-    
         $query = $this->adminApplicationsQuery()->with(['user', 'campus']);
-    
-        if ($user->account_type === 'parent') {
-            $query->where('user_id', $user->id);
-        }
-        // Sesuaikan: jika ada role lain yang tidak boleh akses, tambahkan abort(403) di sini.
-    
+
         $application = $query->findOrFail($id);
     
         $pdf = Pdf::loadView('admin.ppdb_health_pdf', compact('application'));
@@ -167,12 +161,20 @@ class ParentAdmissionApplicationController extends Controller
     private function adminApplicationsQuery()
     {
         $user = auth()->user();
+        $roleName = $user?->role?->name;
+        $allowedRoles = [
+            'super_admin',
+            'managing_director',
+            'administrator',
+            'administration_staff',
+            'principal',
+        ];
 
-        abort_unless($user && $user->account_type !== 'parent', 403);
+        abort_unless($user && in_array($roleName, $allowedRoles, true), 403);
 
         $query = AdmissionApplication::query();
 
-        if ($user->role?->name === 'administration_staff') {
+        if (in_array($roleName, ['administration_staff', 'principal'], true)) {
             $campusIds = $user->campuses()->pluck('campuses.id');
             if ($campusIds->isEmpty() && $user->campus_id) {
                 $campusIds = collect([$user->campus_id]);
@@ -229,8 +231,16 @@ class ParentAdmissionApplicationController extends Controller
                     Storage::disk('local')->delete($application->{$field . '_path'});
                 }
 
-                $application->{$field . '_path'} = $request->file($field)
-                    ->store('admission-applications/' . auth()->id() . '/' . $directory, 'local');
+                $uploadedFile = $request->file($field);
+                $extension = $this->safeDocumentExtension($uploadedFile);
+                abort_unless($extension, 422, 'Format dokumen tidak didukung.');
+
+                $filename = Str::uuid()->toString() . '.' . $extension;
+                $application->{$field . '_path'} = $uploadedFile->storeAs(
+                    'admission-applications/' . auth()->id() . '/' . $directory,
+                    $filename,
+                    'local'
+                );
             }
         }
 
@@ -303,9 +313,8 @@ class ParentAdmissionApplicationController extends Controller
             ->mapWithKeys(fn ($field) => [
                 $field => [
                     $application?->{$field . '_path'} ? 'nullable' : $required,
-                    'file',
-                    'mimes:jpg,jpeg,png,pdf',
-                    'max:5120',
+                    FileRule::types(['jpg', 'jpeg', 'png', 'pdf'])->max(5120),
+                    'mimetypes:image/jpeg,image/png,application/pdf',
                 ],
             ])
             ->all();
@@ -380,6 +389,16 @@ class ParentAdmissionApplicationController extends Controller
             'birth_certificate' => 'birth-certificate',
             'akta' => 'akta',
         ];
+    }
+
+    private function safeDocumentExtension($file): ?string
+    {
+        return match ($file->getMimeType()) {
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'application/pdf' => 'pdf',
+            default => null,
+        };
     }
 
     private function healthRules(bool $isSubmit): array
