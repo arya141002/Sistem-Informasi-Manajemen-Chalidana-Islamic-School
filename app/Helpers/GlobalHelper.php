@@ -86,13 +86,20 @@ if (!function_exists('get_system_file')) {
         }
 
         $publicPath = 'systems/' . ltrim($value, '/');
-        if (Storage::disk('public')->exists($publicPath)) {
-            return Storage::url($publicPath);
+        $publicDisk = Storage::disk('public');
+        if ($publicDisk->exists($publicPath)) {
+            $version = $publicDisk->lastModified($publicPath);
+            $url = $publicDisk->url($publicPath);
+
+            return $url . (str_contains($url, '?') ? '&' : '?') . 'v=' . $version;
         }
 
         $legacyPath = 'uploads/systems/' . ltrim($value, '/');
         if (file_exists(public_path($legacyPath))) {
-            return asset($legacyPath);
+            $url = asset($legacyPath);
+            $version = filemtime(public_path($legacyPath));
+
+            return $url . (str_contains($url, '?') ? '&' : '?') . 'v=' . $version;
         }
 
         return $default ? asset($default) : asset($value);

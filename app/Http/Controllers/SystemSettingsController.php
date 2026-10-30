@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\System;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class SystemSettingsController extends Controller
 {
@@ -52,10 +53,15 @@ class SystemSettingsController extends Controller
             if ($existingFile && Storage::disk('public')->exists('systems/' . $existingFile)) {
                 Storage::disk('public')->delete('systems/' . $existingFile);
             }
+            if ($existingFile) {
+                File::delete(public_path('uploads/systems/' . $existingFile));
+            }
 
             $file = $request->file('site_favicon');
-            $filename = 'favicon-' . time() . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('systems', $filename, 'public');
+            $filename = 'favicon-' . time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $destination = public_path('uploads/systems');
+            File::ensureDirectoryExists($destination);
+            $file->move($destination, $filename);
 
             set_system('site_favicon', $filename, 'appearance');
         }
@@ -66,10 +72,15 @@ class SystemSettingsController extends Controller
             if ($existingLogo && Storage::disk('public')->exists('systems/' . $existingLogo)) {
                 Storage::disk('public')->delete('systems/' . $existingLogo);
             }
+            if ($existingLogo) {
+                File::delete(public_path('uploads/systems/' . $existingLogo));
+            }
 
             $file = $request->file('site_logo');
-            $filename = 'logo-' . time() . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('systems', $filename, 'public');
+            $filename = 'logo-' . time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $destination = public_path('uploads/systems');
+            File::ensureDirectoryExists($destination);
+            $file->move($destination, $filename);
 
             set_system('site_logo', $filename, 'appearance');
         }
