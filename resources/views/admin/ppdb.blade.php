@@ -5,6 +5,13 @@
             <div>
                 <h4 class="fw-bold mb-0"><span class="text-muted fw-light"><i class="bx bx-chevron-right bx-xs"></i></span> PPDB</h4>
                 <small class="text-muted">Kelola aplikasi PPDB, lihat detail, dan download PDF untuk setiap aplikasi.</small>
+                @if($staffCampuses->isNotEmpty())
+                    <div class="mt-2">
+                        <span class="badge bg-label-info">
+                            Cabang: {{ $staffCampuses->pluck('title')->implode(', ') }}
+                        </span>
+                    </div>
+                @endif
             </div>
             <div>
                 <span class="badge bg-label-primary">{{ $applications->total() }} Data</span>

@@ -57,14 +57,13 @@
                             </select>
                         </div>
                         <div class="col-12 col-md-12">
-                            <label class="form-label" for="campus_id">Campus</label>
-                            <select id="campus_id" name="campus_id" class="form-select">
-                                <option value="">All campuses</option>
+                            <label class="form-label" for="campus_ids">Campus</label>
+                            <select id="campus_ids" name="campus_ids[]" class="form-select" multiple>
                                 @foreach($campuses as $campus)
                                     <option value="{{ $campus->id }}">{{ $campus->title }}</option>
                                 @endforeach
                             </select>
-                            <small class="text-muted">Wajib diisi untuk role Administration Staff.</small>
+                            <small class="text-muted">Pilih satu atau beberapa cabang untuk Administration Staff.</small>
                         </div>
                         <div class="col-12 col-md-12 mt-3">
                             <button type="button" id="button-add-user" onclick="simpanuser()" class="btn btn-primary me-1">Add User</button>
@@ -104,14 +103,13 @@
                             </select>
                         </div>
                         <div class="col-12 col-md-12">
-                            <label class="form-label" for="edit_campus_id">Campus</label>
-                            <select id="edit_campus_id" name="campus_id" class="form-select">
-                                <option value="">All campuses</option>
+                            <label class="form-label" for="edit_campus_ids">Campus</label>
+                            <select id="edit_campus_ids" name="campus_ids[]" class="form-select" multiple>
                                 @foreach($campuses as $campus)
                                     <option value="{{ $campus->id }}">{{ $campus->title }}</option>
                                 @endforeach
                             </select>
-                            <small class="text-muted">Wajib diisi untuk role Administration Staff.</small>
+                            <small class="text-muted">Pilih satu atau beberapa cabang untuk Administration Staff.</small>
                         </div>
                         <div class="col-12 col-md-12 mt-3">
                             <button type="button" id="button-edit-user" onclick="updateuser()" class="btn btn-primary me-1">Update User</button>
@@ -194,12 +192,13 @@
             let email = $('#email').val();
             let password = $('#password').val();
             let role_id = $('#role_id').val();
-            let campus_id = $('#campus_id').val();
+            let campus_ids = $('#campus_ids').val() || [];
+            let campus_id = campus_ids[0] || '';
             if (!name || !email || !password || !role_id) {
                 toastr.error('Please fill all fields');
                 return;
             }
-            if ($('#role_id option:selected').text().trim() === 'Administration Staff' && !campus_id) {
+            if ($('#role_id option:selected').text().trim() === 'Administration Staff' && !campus_ids.length) {
                 toastr.error('Please select a campus for Administration Staff');
                 return;
             }
@@ -213,6 +212,7 @@
                     password: password,
                     role_id: role_id,
                     campus_id: campus_id,
+                    campus_ids: campus_ids,
                     _token: '{{ csrf_token() }}'
                 },
                 success: function(response) {
@@ -237,7 +237,8 @@
                     $('#edit_name').val(response.name);
                     $('#edit_email').val(response.email);
                     $('#edit_role_id').val(response.role_id);
-                    $('#edit_campus_id').val(response.campus_id || '');
+                    const assignedCampuses = (response.campuses || []).map((campus) => String(campus.id));
+                    $('#edit_campus_ids').val(assignedCampuses.length ? assignedCampuses : (response.campus_id ? [String(response.campus_id)] : []));
                     $('#editUserModal').modal('show');
                 },
                 error: function(xhr) {
@@ -251,12 +252,13 @@
             let name = $('#edit_name').val();
             let email = $('#edit_email').val();
             let role_id = $('#edit_role_id').val();
-            let campus_id = $('#edit_campus_id').val();
+            let campus_ids = $('#edit_campus_ids').val() || [];
+            let campus_id = campus_ids[0] || '';
             if (!name || !email || !role_id) {
                 toastr.error('Please fill all fields except password');
                 return;
             }
-            if ($('#edit_role_id option:selected').text().trim() === 'Administration Staff' && !campus_id) {
+            if ($('#edit_role_id option:selected').text().trim() === 'Administration Staff' && !campus_ids.length) {
                 toastr.error('Please select a campus for Administration Staff');
                 return;
             }
@@ -269,6 +271,7 @@
                     email: email,
                     role_id: role_id,
                     campus_id: campus_id,
+                    campus_ids: campus_ids,
                     _token: '{{ csrf_token() }}'
                 },
                 success: function(response) {

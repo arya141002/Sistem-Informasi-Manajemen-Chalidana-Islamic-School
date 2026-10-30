@@ -64,4 +64,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Campus::class);
     }
+
+    public function campuses()
+    {
+        return $this->belongsToMany(Campus::class, 'campus_user');
+    }
 }

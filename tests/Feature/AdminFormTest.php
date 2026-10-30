@@ -57,6 +57,33 @@ class AdminFormTest extends TestCase
         ]);
     }
 
+    public function test_administration_staff_can_be_assigned_to_multiple_campuses(): void
+    {
+        $this->actingAs(User::factory()->create());
+        $role = Role::create([
+            'name' => 'administration_staff',
+            'display_name' => 'Administration Staff',
+        ]);
+        $primary = $this->createCampus('primary-malang', 'CIS Primary Malang');
+        $preschool = $this->createCampus('preschool-malang', 'CIS Preschool Malang');
+
+        $response = $this->postJson(route('user.store'), [
+            'name' => 'Malang Admin',
+            'email' => 'malang@example.com',
+            'password' => 'password123',
+            'role_id' => $role->id,
+            'campus_id' => $primary->id,
+            'campus_ids' => [$primary->id, $preschool->id],
+        ]);
+
+        $response->assertOk();
+        $user = User::where('email', 'malang@example.com')->firstOrFail();
+        $this->assertEqualsCanonicalizing(
+            [$primary->id, $preschool->id],
+            $user->campuses()->pluck('campuses.id')->all()
+        );
+    }
+
     public function test_menu_parent_can_have_no_url(): void
     {
         $this->actingAs(User::factory()->create());
@@ -86,11 +113,11 @@ class AdminFormTest extends TestCase
             ->assertJsonValidationErrors('parent_id');
     }
 
-    private function createCampus(): Campus
+    private function createCampus(string $slug = 'main-campus', string $title = 'Main Campus'): Campus
     {
         $areaId = DB::table('campus_area')->insertGetId([
             'title' => 'Main Area',
-            'slug' => 'main-area',
+            'slug' => $slug . '-area',
             'img' => 'area.jpg',
             'pagehead' => 'Main Area',
             'phone' => '0000000000',
@@ -102,11 +129,11 @@ class AdminFormTest extends TestCase
 
         return Campus::create([
             'catcampus_id' => $areaId,
-            'title' => 'Main Campus',
+            'title' => $title,
             'NPSN' => '',
             'school_tour' => '',
             'subject' => '',
-            'slug' => 'main-campus',
+            'slug' => $slug,
             'img_header' => '',
             'img_principal' => '',
             'from' => '',

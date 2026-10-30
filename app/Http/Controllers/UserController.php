@@ -81,9 +81,15 @@ class UserController extends Controller
                         ->exists();
                 }),
             ],
+            'campus_ids' => [
+                'nullable',
+                'array',
+                'min:1',
+            ],
+            'campus_ids.*' => 'exists:campuses,id',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => $request->password,
@@ -91,13 +97,15 @@ class UserController extends Controller
             'campus_id' => $request->campus_id,
         ]);
 
+        $user->campuses()->sync($request->input('campus_ids', []));
+
         return response()->json(['message' => 'User berhasil disimpan!']);
     }
 
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        return response()->json($user);
+        return response()->json($user->load('campuses'));
     }
 
     public function update(Request $request, $id)
@@ -122,6 +130,12 @@ class UserController extends Controller
                         ->exists();
                 }),
             ],
+            'campus_ids' => [
+                'nullable',
+                'array',
+                'min:1',
+            ],
+            'campus_ids.*' => 'exists:campuses,id',
         ]);
 
         $user->update([
@@ -130,6 +144,7 @@ class UserController extends Controller
             'role_id' => $request->role_id,
             'campus_id' => $request->campus_id,
         ]);
+        $user->campuses()->sync($request->input('campus_ids', []));
 
         return response()->json(['message' => 'User berhasil diperbarui!']);
     }

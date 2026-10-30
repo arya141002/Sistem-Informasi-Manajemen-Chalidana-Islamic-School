@@ -41,7 +41,7 @@ class ParentAdmissionApplicationController extends Controller
         $search = trim($request->query('search', ''));
         $status = $request->query('status');
     
-        $applications = AdmissionApplication::query()
+        $applications = $this->adminApplicationsQuery()
             ->with(['user', 'campus'])
             ->when($search !== '', function ($q) use ($search) {
                 $q->where(function ($q) use ($search) {
@@ -56,12 +56,16 @@ class ParentAdmissionApplicationController extends Controller
             ->paginate(15)
             ->withQueryString();
     
-        return view('admin.ppdb', compact('applications', 'search', 'status'));
+        $staffCampuses = auth()->user()->role?->name === 'administration_staff'
+            ? auth()->user()->campuses
+            : collect();
+
+        return view('admin.ppdb', compact('applications', 'search', 'status', 'staffCampuses'));
     }
 
     public function showAdmin(int $id)
     {
-        $application = AdmissionApplication::query()
+        $application = $this->adminApplicationsQuery()
             ->with(['user', 'campus'])
             ->findOrFail($id);
 
@@ -72,7 +76,7 @@ class ParentAdmissionApplicationController extends Controller
     {
         ini_set('memory_limit', '512M');
 
-        $application = AdmissionApplication::query()
+        $application = $this->adminApplicationsQuery()
             ->with(['user', 'campus'])
             ->findOrFail($id);
 
@@ -89,7 +93,7 @@ class ParentAdmissionApplicationController extends Controller
     
         $user = auth()->user();
     
-        $query = AdmissionApplication::query()->with(['user', 'campus']);
+        $query = $this->adminApplicationsQuery()->with(['user', 'campus']);
     
         if ($user->account_type === 'parent') {
             $query->where('user_id', $user->id);
@@ -107,7 +111,7 @@ class ParentAdmissionApplicationController extends Controller
 
     public function downloadCsv()
     {
-        $applications = AdmissionApplication::query()
+        $applications = $this->adminApplicationsQuery()
             ->with('user')
             ->orderByDesc('created_at')
             ->get();
@@ -158,6 +162,27 @@ class ParentAdmissionApplicationController extends Controller
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
+    }
+
+    private function adminApplicationsQuery()
+    {
+        $user = auth()->user();
+
+        abort_unless($user && $user->account_type !== 'parent', 403);
+
+        $query = AdmissionApplication::query();
+
+        if ($user->role?->name === 'administration_staff') {
+            $campusIds = $user->campuses()->pluck('campuses.id');
+            if ($campusIds->isEmpty() && $user->campus_id) {
+                $campusIds = collect([$user->campus_id]);
+            }
+
+            abort_unless($campusIds->isNotEmpty(), 403, 'Akun staff belum memiliki cabang.');
+            $query->whereIn('campus_id', $campusIds);
+        }
+
+        return $query;
     }
 
     public function store(Request $request): RedirectResponse
