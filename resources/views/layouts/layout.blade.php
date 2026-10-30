@@ -41,7 +41,7 @@
     <meta name="twitter:image" content="{{ $seoImage }}" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('assets/images/icon/CIS_Logo.webp') }}" />
+    <link rel="icon" href="{{ get_system_file('site_favicon', 'assets/img/favicon/favicon.ico') }}" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -125,7 +125,7 @@
           <div class="app-brand demo">
             <a href="{{ route('dashboard') }}" class="app-brand-link">
               <span class="app-brand-logo demo">
-                <img src="{{ webp_asset('images/icon/logo-branding-CIS-01.png') }}" alt="Chalidana Islamic School">
+                <img src="{{ get_system_file('site_logo', 'images/icon/logo-branding-CIS-01.png') }}" alt="Chalidana Islamic School">
               </span>
             </a>
 
@@ -298,6 +298,14 @@
     <script src="{{ asset('assets/js/dashboards-analytics.js') }}"></script>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script>
+      function formatValidationErrors(xhr, fallback) {
+        const response = xhr.responseJSON || {};
+        const errors = response.errors || {};
+        const messages = Object.values(errors).flat();
+
+        return messages.length ? messages.join('<br>') : (response.message || fallback);
+      }
+
       (function () {
         const searchInput = document.getElementById('global-menu-search');
         const resultBox = document.getElementById('global-search-result');

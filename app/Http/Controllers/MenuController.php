@@ -46,7 +46,7 @@ class MenuController extends Controller
         ]);
 
         $menu = Menu::create([
-            'order' => $request->order,
+            'order' => $request->input('order', 0) ?? 0,
             'icon' => $request->icon,
             'title' => $request->title,
             'url' => $request->url,
@@ -78,14 +78,22 @@ class MenuController extends Controller
             'icon' => 'nullable|string|max:255',
             'title' => 'required|string|max:255',
             'url' => 'nullable|string|max:255',
-            'parent_id' => 'nullable|exists:menus,id',
+            'parent_id' => [
+                'nullable',
+                'exists:menus,id',
+                function ($attribute, $value, $fail) use ($id) {
+                    if ((int) $value === (int) $id) {
+                        $fail('A menu cannot be its own parent.');
+                    }
+                },
+            ],
             'roles' => 'nullable|array',
             'roles.*' => 'exists:roles,id'
         ]);
 
         $menu = Menu::findOrFail($id);
         $menu->update([
-            'order' => $request->order,
+            'order' => $request->input('order', 0) ?? 0,
             'icon' => $request->icon,
             'title' => $request->title,
             'url' => $request->url,

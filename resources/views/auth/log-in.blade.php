@@ -19,7 +19,7 @@
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ webp_asset('assets/img/icons/CIS_Branding_Logo.png') }}" />
+    <link rel="icon" href="{{ get_system_file('site_favicon', 'assets/img/favicon/favicon.ico') }}" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -60,7 +60,7 @@
               <!-- Logo -->
               <div class="app-brand justify-content-center">
                 <a href="{{ url('/') }}" class="app-brand-link gap-2">
-                  <img src="{{ webp_asset('images/icon/logo-branding-CIS-01.png') }}" width="50%" alt="Chalidana Islamic School">
+                  <img src="{{ get_system_file('site_logo', 'images/icon/logo-branding-CIS-01.png') }}" width="50%" alt="Chalidana Islamic School">
                   {{-- <div class="demo text-body fw-bolder">{{ config('app.name') }}</div> --}}
                 </a>
               </div>
@@ -68,18 +68,29 @@
               <p class="mb-4">Please sign-in to your account</p>
 
               <form id="formAuthentication" class="mb-3" action="{{ route('login') }}" method="POST">
+                @csrf
                 @if(session('status'))
                   <div class="alert alert-success">{{ session('status') }}</div>
                 @endif
+                @if($errors->any())
+                  <div class="alert alert-danger">
+                    @foreach($errors->all() as $error)
+                      <div>{{ $error }}</div>
+                    @endforeach
+                  </div>
+                @endif
                 <div class="mb-3">
-                  <label for="email" class="form-label">Email or Username</label>
+                  <label for="email" class="form-label">Email</label>
                   <input
-                    type="text"
+                    type="email"
                     class="form-control"
                     id="email"
-                    name="email-username"
-                    placeholder="Enter your email or username"
+                    name="email"
+                    value="{{ old('email') }}"
+                    placeholder="Enter your email"
                     autofocus
+                    autocomplete="username"
+                    required
                   />
                 </div>
                 <div class="mb-3 form-password-toggle">
@@ -97,12 +108,14 @@
                       name="password"
                       placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
                       aria-describedby="password"
+                      autocomplete="current-password"
+                      required
                     />
                     <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                   </div>
                 </div>
                 <div class="mb-3">
-                  <button class="btn btn-primary d-grid w-100" id="login-button" type="button" onclick="login()">Sign in</button>
+                  <button class="btn btn-primary d-grid w-100" id="login-button" type="submit">Sign in</button>
                 </div>
               </form>
             </div>
@@ -120,59 +133,5 @@
     <script src="{{ asset('assets/vendor/js/menu.js') }}"></script>
     <script src="{{ asset('assets/js/main.js') }}"></script>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script>
-        function reset(){
-            $('#email').val('');
-            $('#password').val('');
-            $('#email').removeClass('is-invalid');
-            $('#password').removeClass('is-invalid');
-            $('#login-button').prop('disabled', false).text('Sign in');
-        }
-
-        function login(){
-            let email = $('#email').val();
-            let password = $('#password').val();
-            if(!email){
-                $('#email').addClass('is-invalid');
-                $('#email').focus();
-                return;
-            } else if(!password){
-                $('#password').addClass('is-invalid');
-                $('#password').focus();
-                return;
-            } else {
-                $('#email').removeClass('is-invalid');
-                $('#password').removeClass('is-invalid');
-            }
-            $('#login-button').prop('disabled', true).text('Logging in...');
-            $.ajax({
-                url: "{{ route('login') }}",
-                method: "POST",
-                data: {
-                    email: email,
-                    password: password,
-                    _token: "{{ csrf_token() }}"
-                },
-                success: function(response){
-                    if(response.success){
-                        $.notify(response.message, 'success');
-                        window.location.href = response.redirect;
-                        reset();
-                    } else {
-                        reset();
-                        $.notify(response.message || 'Login failed. Please check your credentials and try again.', 'error');
-                    }
-                },
-                error: function(xhr){
-                    reset();
-                    let errorMessage = 'An error occurred. Please try again.';
-                    if(xhr.responseJSON && xhr.responseJSON.message){
-                        errorMessage = xhr.responseJSON.message;
-                    }
-                    $.notify(errorMessage, 'error');
-                }
-            });
-        }
-    </script>
   </body>
 </html>

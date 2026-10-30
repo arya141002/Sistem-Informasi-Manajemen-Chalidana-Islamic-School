@@ -116,6 +116,27 @@
                         />
                     </div>
 
+                    <div class="col-md-6">
+                        <label class="form-label" for="site_logo">Site Logo</label>
+                        <input
+                            type="file"
+                            class="form-control"
+                            id="site_logo"
+                            name="site_logo"
+                            accept=".png,.jpg,.jpeg,.svg"
+                        />
+                        <small class="text-muted">Maksimal 2MB. Format: png, jpg, jpeg, svg.</small>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label d-block">Logo Saat Ini</label>
+                        <img
+                            src="{{ get_system_file('site_logo', 'images/icon/logo-branding-CIS-01.png') }}"
+                            alt="Current Logo"
+                            style="max-width: 240px; max-height: 72px; object-fit: contain;"
+                        />
+                    </div>
+
                     <div class="col-12">
                         <button type="submit" class="btn btn-primary">Save Settings</button>
                     </div>

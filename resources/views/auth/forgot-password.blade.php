@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Forgot Password | {{ config('app.name') }}</title>
-    <link rel="icon" type="image/x-icon" href="{{ webp_asset('images/icon/CIS_Logo.webp') }}">
+    <link rel="icon" href="{{ get_system_file('site_favicon', 'assets/img/favicon/favicon.ico') }}">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
     <link href="{{ asset('landing/css/bootstrap.min.css') }}" rel="stylesheet">
 </head>
@@ -44,10 +44,7 @@
                         </form>
 
                         <div class="text-center mt-4">
-                            <a href="{{ route('parent.login') }}">Kembali ke login parent</a>
-                        </div>
-                        <div class="text-center mt-3">
-                            <a href="{{ route('login') }}" class="text-muted">Login admin</a>
+                            <a href="{{ route('login') }}" class="text-muted">Kembali ke login admin</a>
                         </div>
                     </div>
                 </div>

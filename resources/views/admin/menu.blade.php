@@ -39,11 +39,11 @@
                     <form class="row g-3">
                         <div class="col-6">
                             <label class="form-label" for="order">Order</label>
-                            <input type="number" id="order" name="order" class="form-control" placeholder="Masukkan urutan menu" required />
+                            <input type="number" id="order" name="order" class="form-control" placeholder="Masukkan urutan menu (opsional)" />
                         </div>
                         <div class="col-6">
                             <label class="form-label" for="icon">Icon</label>
-                            <select id="icon" name="icon" class="form-select" required>
+                            <select id="icon" name="icon" class="form-select">
                                 <option value="">-- Pilih Icon --</option>
                             </select>
                         </div>
@@ -62,7 +62,7 @@
                         </div>
                         <div class="col-6">
                             <label class="form-label" for="url">URL</label>
-                            <input type="text" id="url" name="url" class="form-control" placeholder="Masukkan URL menu (misal: /dashboard)" required />
+                            <input type="text" id="url" name="url" class="form-control" placeholder="Masukkan URL menu (opsional untuk parent)" />
                         </div>
                         <div class="col-6">
                             <label class="form-label" for="roles">Roles</label>
@@ -94,11 +94,11 @@
                         <input type="hidden" id="edit_menu_id" name="edit_menu_id" />
                         <div class="col-6">
                             <label class="form-label" for="edit_order">Order</label>
-                            <input type="number" id="edit_order" name="edit_order" class="form-control" placeholder="Masukkan urutan menu" required />
+                            <input type="number" id="edit_order" name="edit_order" class="form-control" placeholder="Masukkan urutan menu (opsional)" />
                         </div>
                         <div class="col-6">
                             <label class="form-label" for="edit_icon">Icon</label>
-                            <select id="edit_icon" name="edit_icon" class="form-select" required>
+                            <select id="edit_icon" name="edit_icon" class="form-select">
                                 <option value="">-- Pilih Icon --</option>
                             </select>
                         </div>
@@ -117,7 +117,7 @@
                         </div>
                         <div class="col-6">
                             <label class="form-label" for="edit_url">URL</label>
-                            <input type="text" id="edit_url" name="edit_url" class="form-control" placeholder="Masukkan URL menu (misal: /dashboard)" required />
+                            <input type="text" id="edit_url" name="edit_url" class="form-control" placeholder="Masukkan URL menu (opsional untuk parent)" />
                         </div>
                         <div class="col-6">
                             <label class="form-label" for="edit_roles">Roles</label>
@@ -253,14 +253,10 @@
             let parent_id = $('#parent_id').val();
             let url = $('#url').val();
             let roles = $('#roles').val();
-            if (!order || !icon || !title || !url) {
-                $('#order, #icon, #title, #url, #roles').each(function() {
-                    if (!$(this).val()) {
-                        $(this).addClass('is-invalid');
-                    } else {
-                        $(this).removeClass('is-invalid');
-                    }
-                });
+            if (!title) {
+                $('#title').addClass('is-invalid');
+                toastr.error('Title wajib diisi.');
+                return;
             }
             $('#button-menu').prop('disabled', true).text('Saving...');
             $.ajax({
@@ -284,7 +280,7 @@
                 error: function(xhr){
                     $('#menuModal').modal('hide');
                     reset();
-                    toastr.error('Gagal menyimpan menu. Pastikan semua field terisi dengan benar.');
+                    toastr.error(formatValidationErrors(xhr, 'Gagal menyimpan menu.'));
                 },
                 complete: function(){
                     $('#button-menu').prop('disabled', false).text('Submit');
@@ -300,6 +296,8 @@
                     $('#edit_menu_id').val(response.id);
                     $('#edit_order').val(response.order);
                     $('#edit_title').val(response.title);
+                    $('#edit_parent_id option').prop('disabled', false);
+                    $('#edit_parent_id option[value="' + response.id + '"]').prop('disabled', true);
                     $('#edit_parent_id').val(response.parent_id);
                     $('#edit_url').val(response.url);
                     await populateIcons(response.icon);
@@ -327,14 +325,13 @@
             let parent_id = $('#edit_parent_id').val();
             let url = $('#edit_url').val();
             let roles = $('#edit_roles').val();
-            if (!order || !icon || !title || !url) {
-                $('#edit_order, #edit_icon, #edit_title, #edit_url, #edit_roles').each(function() {
-                    if (!$(this).val()) {
-                        $(this).addClass('is-invalid');
-                    } else {
-                        $(this).removeClass('is-invalid');
-                    }
-                });
+            if (!title) {
+                $('#edit_title').addClass('is-invalid');
+                toastr.error('Title wajib diisi.');
+                return;
+            }
+            if (Number(parent_id) === Number(id)) {
+                toastr.error('Menu tidak boleh menjadi parent untuk dirinya sendiri.');
                 return;
             }
             $('#button-edit-menu').prop('disabled', true).text('Updating...');
@@ -357,7 +354,7 @@
                 },
                 error: function(xhr){
                     $('#editMenuModal').modal('hide');
-                    toastr.error('Gagal memperbarui menu. Pastikan semua field terisi dengan benar.');
+                    toastr.error(formatValidationErrors(xhr, 'Gagal memperbarui menu.'));
                 },
                 complete: function(){
                     $('#button-edit-menu').prop('disabled', false).text('Update');

@@ -42,11 +42,11 @@
                     <form id="teacher-and-staff-form" class="row g-3">
                         <div class="col-12">
                             <label for="img" class="form-label">Image</label>
-                            <input type="file" id="img" name="img" class="form-control">
+                            <input type="file" id="img" name="img" class="form-control" accept="image/jpeg,image/png,image/gif" required>
                         </div>
                         <div class="col-12">
                             <label for="campus_id" class="form-label">Campus</label>
-                            <select id="campus_id" name="campus_id" class="form-select">
+                            <select id="campus_id" name="campus_id" class="form-select" required>
                                 <option value="">Select Campus</option>
                                 @foreach($campuses as $campus)
                                     <option value="{{ $campus->id }}">{{ $campus->title }}</option>
@@ -55,7 +55,7 @@
                         </div>
                         <div class="col-12">
                             <label for="role" class="form-label">Role</label>
-                            <select id="role" name="role" class="form-select">
+                            <select id="role" name="role" class="form-select" required>
                                 <option value="">Select Role</option>
                                 <option value="teacher">Teacher</option>
                                 <option value="staff">Staff</option>
@@ -100,11 +100,11 @@
                         <input type="hidden" id="edit_id" name="id">
                         <div class="col-12">
                             <label for="edit_img" class="form-label">Image</label>
-                            <input type="file" id="edit_img" name="img" class="form-control">
+                            <input type="file" id="edit_img" name="img" class="form-control" accept="image/jpeg,image/png,image/gif">
                         </div>
                         <div class="col-12">
                             <label for="edit_campus_id" class="form-label">Campus</label>
-                            <select id="edit_campus_id" name="campus_id" class="form-select">
+                            <select id="edit_campus_id" name="campus_id" class="form-select" required>
                                 <option value="">Select Campus</option>
                                 @foreach($campuses as $campus)
                                     <option value="{{ $campus->id }}">{{ $campus->title }}</option>
@@ -113,7 +113,7 @@
                         </div>
                         <div class="col-12">
                             <label for="edit_role" class="form-label">Role</label>
-                            <select id="edit_role" name="role" class="form-select">
+                            <select id="edit_role" name="role" class="form-select" required>
                                 <option value="">Select Role</option>
                                 <option value="teacher">Teacher</option>
                                 <option value="staff">Staff</option>
@@ -260,7 +260,7 @@
                     $('#submit-teacher-and-staff').prop('disabled', false).text('Submit');
                 },
                 error: function(xhr) {
-                    toastr.error('Failed to add Teacher/Staff');
+                    toastr.error(formatValidationErrors(xhr, 'Failed to add Teacher/Staff'));
                     $('#submit-teacher-and-staff').prop('disabled', false).text('Submit');
                 }
             });
@@ -316,7 +316,7 @@
                     $('#update-teacher-and-staff').prop('disabled', false).text('Update');
                 },
                 error: function(xhr) {
-                    toastr.error('Failed to update Teacher/Staff');
+                    toastr.error(formatValidationErrors(xhr, 'Failed to update Teacher/Staff'));
                     $('#update-teacher-and-staff').prop('disabled', false).text('Update');
                 }
             });
@@ -341,7 +341,7 @@
                     toastr.success('Teacher/Staff deleted successfully');
                 },
                 error: function(xhr) {
-                    toastr.error('Failed to delete Teacher/Staff');
+                    toastr.error(formatValidationErrors(xhr, 'Failed to delete Teacher/Staff'));
                 }
             });
         });

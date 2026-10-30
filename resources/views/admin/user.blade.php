@@ -56,6 +56,16 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="col-12 col-md-12">
+                            <label class="form-label" for="campus_id">Campus</label>
+                            <select id="campus_id" name="campus_id" class="form-select">
+                                <option value="">All campuses</option>
+                                @foreach($campuses as $campus)
+                                    <option value="{{ $campus->id }}">{{ $campus->title }}</option>
+                                @endforeach
+                            </select>
+                            <small class="text-muted">Wajib diisi untuk role Administration Staff.</small>
+                        </div>
                         <div class="col-12 col-md-12 mt-3">
                             <button type="button" id="button-add-user" onclick="simpanuser()" class="btn btn-primary me-1">Add User</button>
                             <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -92,6 +102,16 @@
                                     <option value="{{ $role->id }}">{{ $role->display_name }}</option>
                                 @endforeach
                             </select>
+                        </div>
+                        <div class="col-12 col-md-12">
+                            <label class="form-label" for="edit_campus_id">Campus</label>
+                            <select id="edit_campus_id" name="campus_id" class="form-select">
+                                <option value="">All campuses</option>
+                                @foreach($campuses as $campus)
+                                    <option value="{{ $campus->id }}">{{ $campus->title }}</option>
+                                @endforeach
+                            </select>
+                            <small class="text-muted">Wajib diisi untuk role Administration Staff.</small>
                         </div>
                         <div class="col-12 col-md-12 mt-3">
                             <button type="button" id="button-edit-user" onclick="updateuser()" class="btn btn-primary me-1">Update User</button>
@@ -174,8 +194,13 @@
             let email = $('#email').val();
             let password = $('#password').val();
             let role_id = $('#role_id').val();
+            let campus_id = $('#campus_id').val();
             if (!name || !email || !password || !role_id) {
                 toastr.error('Please fill all fields');
+                return;
+            }
+            if ($('#role_id option:selected').text().trim() === 'Administration Staff' && !campus_id) {
+                toastr.error('Please select a campus for Administration Staff');
                 return;
             }
             $('#button-add-user').prop('disabled', true).text('Adding...');
@@ -187,6 +212,7 @@
                     email: email,
                     password: password,
                     role_id: role_id,
+                    campus_id: campus_id,
                     _token: '{{ csrf_token() }}'
                 },
                 success: function(response) {
@@ -196,7 +222,7 @@
                     toastr.success("User added successfully!");
                 },
                 error: function(xhr) {
-                    toastr.error("Failed to add user. Please try again.");
+                    toastr.error(formatValidationErrors(xhr, "Failed to add user."));
                     resetForm();
                 }
             });
@@ -211,6 +237,7 @@
                     $('#edit_name').val(response.name);
                     $('#edit_email').val(response.email);
                     $('#edit_role_id').val(response.role_id);
+                    $('#edit_campus_id').val(response.campus_id || '');
                     $('#editUserModal').modal('show');
                 },
                 error: function(xhr) {
@@ -224,8 +251,13 @@
             let name = $('#edit_name').val();
             let email = $('#edit_email').val();
             let role_id = $('#edit_role_id').val();
+            let campus_id = $('#edit_campus_id').val();
             if (!name || !email || !role_id) {
                 toastr.error('Please fill all fields except password');
+                return;
+            }
+            if ($('#edit_role_id option:selected').text().trim() === 'Administration Staff' && !campus_id) {
+                toastr.error('Please select a campus for Administration Staff');
                 return;
             }
             $('#button-edit-user').prop('disabled', true).text('Updating...');
@@ -236,6 +268,7 @@
                     name: name,
                     email: email,
                     role_id: role_id,
+                    campus_id: campus_id,
                     _token: '{{ csrf_token() }}'
                 },
                 success: function(response) {
@@ -245,7 +278,7 @@
                     toastr.success("User updated successfully!");
                 },
                 error: function(xhr) {
-                    toastr.error("Failed to update user. Please try again.");
+                    toastr.error(formatValidationErrors(xhr, "Failed to update user."));
                     resetForm();
                 }
             });
@@ -272,7 +305,7 @@
                     toastr.success("User deleted successfully!");
                 },
                 error: function(xhr) {
-                    toastr.error("Failed to delete user. Please try again.");
+                    toastr.error(formatValidationErrors(xhr, "Failed to delete user."));
                 }
             });
         }
@@ -286,8 +319,12 @@
             let user_id = $('#password_user_id').val();
             let new_password = $('#new_password').val();
             let confirm_password = $('#confirm_password').val();
-            if (!new_password) {
-                toastr.error('Please enter a new password');
+            if (!new_password || !confirm_password) {
+                toastr.error('Please enter and confirm the new password');
+                return;
+            }
+            if (new_password !== confirm_password) {
+                toastr.error('Password confirmation does not match');
                 return;
             }
             $('#button-password-user').prop('disabled', true).text('Changing...');
@@ -304,7 +341,7 @@
                     toastr.success("Password changed successfully!");
                 },
                 error: function(xhr) {
-                    toastr.error("Failed to change password. Please try again.");
+                    toastr.error(formatValidationErrors(xhr, "Failed to change password."));
                 }
             });
         }
