@@ -2,7 +2,7 @@
 @section('content')
     <style>
         #branch-table { table-layout: fixed; }
-        #branch-table th, #branch-table td { vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        #branch-table th, #branch-table td { vertical-align: middle; }
     </style>
     <div class="container-xxl flex-grow-1 container-p-y">
         <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light"><i class="bx bx-chevron-right bx-xs"></i></span> {{ $title }}</h4>
@@ -12,7 +12,7 @@
                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addModal"><i class="bx bx-plus"></i> Add Branch</button>
             </div>
             <div class="card-body">
-                <div class="table-responsive text-nowrap">
+                <div class="table-responsive admin-table-wrapper">
                     <table class="table" id="branch-table">
                         <thead>
                             <tr>

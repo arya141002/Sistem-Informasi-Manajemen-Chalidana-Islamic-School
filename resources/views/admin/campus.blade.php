@@ -15,7 +15,7 @@
                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#campusModal"><i class="bx bx-plus"></i> Add Campus</button>
             </div>
             <div class="card-body">
-                <div class="table-responsive text-nowrap">
+                <div class="table-responsive admin-table-wrapper">
                     <table class="table" id="campus-table">
                         <thead>
                             <tr>

@@ -10,7 +10,7 @@
                 </button>
             </div>
             <div class="card-body">
-                <div class="table-responsive text-nowrap">
+                <div class="table-responsive admin-table-wrapper">
                     <table class="table" id="campus-area-table">
                         <thead>
                             <tr>

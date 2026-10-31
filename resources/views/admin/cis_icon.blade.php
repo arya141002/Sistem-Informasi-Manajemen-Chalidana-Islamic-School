@@ -8,7 +8,7 @@
                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#Modal"><i class="bx bx-plus"></i> Add {{ $title }}</button>
             </div>
             <div class="card-body">
-                <div class="table-responsive text-nowrap">
+                <div class="table-responsive admin-table-wrapper">
                     <table class="table" id="cisicon-table">
                         <thead>
                             <tr>

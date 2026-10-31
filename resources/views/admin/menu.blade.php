@@ -9,7 +9,7 @@
                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#menuModal"><i class="bx bx-plus"></i> Add Menu</button>
             </div>
             <div class="card-body">
-                <div class="table-responsive text-nowrap">
+                <div class="table-responsive admin-table-wrapper">
                     <table class="table" id="menu-table">
                         <thead>
                             <tr>

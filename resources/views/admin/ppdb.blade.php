@@ -43,7 +43,7 @@
                 @if($applications->isEmpty())
                     <div class="alert alert-warning mb-0">Belum ada data PPDB yang tersedia.</div>
                 @else
-                    <div class="text-nowrap">
+                    <div class="admin-table-wrapper">
                         <table class="table table-hover align-middle table-fit">
                             <thead>
                                 <tr class="text-center">

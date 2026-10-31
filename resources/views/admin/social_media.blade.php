@@ -2,7 +2,7 @@
 @section('content')
     <style>
         #social-media-table { table-layout: fixed; }
-        #social-media-table th, #social-media-table td { vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        #social-media-table th, #social-media-table td { vertical-align: middle; }
         .icon-preview { display:inline-flex; align-items:center; gap:6px; }
         .icon-preview i { font-size:18px; }
         .color-chip { display:inline-block; width:18px; height:18px; border-radius:4px; border:1px solid #d9dee3; vertical-align:middle; }
@@ -15,7 +15,7 @@
                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addModal"><i class="bx bx-plus"></i> Add {{ $title }}</button>
             </div>
             <div class="card-body">
-                <div class="table-responsive text-nowrap">
+                <div class="table-responsive admin-table-wrapper">
                     <table class="table" id="social-media-table">
                         <thead>
                             <tr>

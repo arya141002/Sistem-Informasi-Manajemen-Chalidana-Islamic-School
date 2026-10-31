@@ -11,7 +11,7 @@
         <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light"><i class="bx bx-chevron-right bx-xs"></i></span> {{ $title }}</h4>
         <style>
             #events-table { table-layout: fixed; }
-            #events-table th, #events-table td { vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            #events-table th, #events-table td { vertical-align: middle; }
         </style>
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
@@ -19,7 +19,7 @@
                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addModal"><i class="bx bx-plus"></i> Add Event</button>
             </div>
             <div class="card-body">
-                <div class="table-responsive text-nowrap">
+                <div class="table-responsive admin-table-wrapper">
                     <table class="table" id="events-table">
                         <thead>
                             <tr>

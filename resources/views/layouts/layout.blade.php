@@ -77,6 +77,37 @@
 
     <!-- Page CSS -->
     <style>
+        .admin-table-wrapper {
+            overflow-x: hidden;
+        }
+        .admin-table-wrapper > table,
+        .admin-table-wrapper .dataTables_wrapper table {
+            width: 100% !important;
+            table-layout: fixed;
+        }
+        .admin-table-wrapper table th,
+        .admin-table-wrapper table td {
+            max-width: 0;
+            white-space: normal !important;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            vertical-align: middle;
+        }
+        .admin-table-wrapper table th:last-child,
+        .admin-table-wrapper table td:last-child {
+            width: 96px;
+            max-width: 96px;
+            white-space: nowrap !important;
+            word-break: normal;
+            overflow-wrap: normal;
+        }
+        .admin-table-wrapper .dataTables_wrapper .dataTables_length,
+        .admin-table-wrapper .dataTables_wrapper .dataTables_filter {
+            white-space: normal;
+        }
+        .admin-table-wrapper .dataTables_wrapper .dataTables_filter input {
+            max-width: 100%;
+        }
         /* Fix z-index untuk notifikasi agar tidak tertutup navbar */
         .notifyjs-corner {
             z-index: 9999 !important;

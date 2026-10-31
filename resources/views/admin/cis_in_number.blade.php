@@ -2,7 +2,7 @@
 @section('content')
     <style>
         #cis-number-table { table-layout: fixed; }
-        #cis-number-table th, #cis-number-table td { vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        #cis-number-table th, #cis-number-table td { vertical-align: middle; }
         .icon-preview { display:inline-flex; align-items:center; gap:6px; }
         .icon-preview i { font-size:18px; }
         .rich-editor { border: 1px solid #d9dee3; border-radius: .375rem; background: #fff; }
@@ -18,7 +18,7 @@
                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addModal"><i class="bx bx-plus"></i> Add {{ $title }}</button>
             </div>
             <div class="card-body">
-                <div class="table-responsive text-nowrap">
+                <div class="table-responsive admin-table-wrapper">
                     <table class="table" id="cis-number-table">
                         <thead>
                             <tr>

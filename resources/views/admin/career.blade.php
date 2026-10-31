@@ -2,7 +2,7 @@
 @section('content')
     <style>
         #career-table { table-layout: fixed; }
-        #career-table th, #career-table td { vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        #career-table th, #career-table td { vertical-align: middle; }
         .rich-editor { border: 1px solid #d9dee3; border-radius: .375rem; background: #fff; }
         .rich-editor__toolbar { display:flex; flex-wrap:wrap; gap:.35rem; padding:.6rem; border-bottom:1px solid #eceef1; background:#f8f9fb; }
         .rich-editor__toolbar button { border:1px solid #d9dee3; border-radius:.3rem; background:#fff; color:#566a7f; padding:.25rem .55rem; font-size:.8rem; }
@@ -16,7 +16,7 @@
                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addModal"><i class="bx bx-plus"></i> Add {{ $title }}</button>
             </div>
             <div class="card-body">
-                <div class="table-responsive text-nowrap">
+                <div class="table-responsive admin-table-wrapper">
                     <table class="table" id="career-table">
                         <thead>
                             <tr>
