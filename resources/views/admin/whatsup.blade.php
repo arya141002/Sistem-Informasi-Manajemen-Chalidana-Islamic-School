@@ -123,10 +123,6 @@
                             <input type="date" class="form-control" id="edit-tanggal">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Change Image</label>
-                            <input type="file" class="form-control" id="edit-img" accept="image/*">
-                        </div>
-                        <div class="col-md-6">
                             <label class="form-label">Title (EN)</label>
                             <input type="text" class="form-control" id="edit-title">
                         </div>
@@ -134,6 +130,11 @@
                             <label class="form-label">Title (ID)</label>
                             <input type="text" class="form-control" id="edit-title_id">
                         </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Change Image</label>
+                            <input type="file" class="form-control" id="edit-img" accept="image/*">
+                        </div>
+                        <div class="col-md-6"></div>
                         <div class="col-md-6">
                             <label class="form-label">Content (EN)</label>
                             <div class="rich-editor" data-editor-target="edit-content">
