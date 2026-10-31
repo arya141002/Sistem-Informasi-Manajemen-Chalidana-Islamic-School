@@ -86,7 +86,6 @@ class WhatsupController extends Controller
         $request->validate([
             'news_id' => 'required|exists:whatsup_category,id',
             'tanggal' => 'nullable|date',
-            'slug' => 'required|string|max:200|unique:news,slug,' . $id,
             'img' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'title' => 'required|string|max:255',
             'title_id' => 'required|string|max:255',
@@ -94,7 +93,17 @@ class WhatsupController extends Controller
             'content_id' => 'nullable|string',
         ]);
 
-        $data = $request->only(['news_id', 'tanggal', 'slug', 'title', 'title_id', 'content', 'content_id']);
+        $data = $request->only(['news_id', 'tanggal', 'title', 'title_id', 'content', 'content_id']);
+        $slug = Str::slug($request->title);
+        $originalSlug = $slug;
+        $count = 1;
+
+        while (Whatsup::where('slug', $slug)->where('id', '!=', $item->id)->exists()) {
+            $slug = "{$originalSlug}-{$count}";
+            $count++;
+        }
+
+        $data['slug'] = $slug;
 
         if ($request->hasFile('img')) {
             $destinationPath = public_path('images/whatsup');

@@ -34,7 +34,15 @@
                 </div>
                 <div class="modal-body py-3 py-md-4">
                     <div class="row g-3">
-                        <div class="col-md-6"><label class="form-label">Study ID</label><input type="number" class="form-control" id="add-study_id"></div>
+                        <div class="col-md-6">
+                            <label class="form-label">School Branch</label>
+                            <select class="form-select" id="add-campus_id">
+                                <option value="">Select School Branch</option>
+                                @foreach($campuses as $campus)
+                                    <option value="{{ $campus->id }}">{{ $campus->title }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div class="col-md-6"><label class="form-label">Title (EN)</label><input type="text" class="form-control" id="add-title"></div>
                         <div class="col-md-6"><label class="form-label">Title (ID)</label><input type="text" class="form-control" id="add-title_id"></div>
                         <div class="col-md-6"><label class="form-label">Location</label><input type="text" class="form-control" id="add-location"></div>
@@ -59,7 +67,15 @@
                 <div class="modal-body py-3 py-md-4">
                     <input type="hidden" id="edit-id">
                     <div class="row g-3">
-                        <div class="col-md-6"><label class="form-label">Study ID</label><input type="number" class="form-control" id="edit-study_id"></div>
+                        <div class="col-md-6">
+                            <label class="form-label">School Branch</label>
+                            <select class="form-select" id="edit-campus_id">
+                                <option value="">Select School Branch</option>
+                                @foreach($campuses as $campus)
+                                    <option value="{{ $campus->id }}">{{ $campus->title }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div class="col-md-6"><label class="form-label">Title (EN)</label><input type="text" class="form-control" id="edit-title"></div>
                         <div class="col-md-6"><label class="form-label">Title (ID)</label><input type="text" class="form-control" id="edit-title_id"></div>
                         <div class="col-md-6"><label class="form-label">Location</label><input type="text" class="form-control" id="edit-location"></div>
@@ -115,7 +131,7 @@
         function saveCategory() {
             const fd = new FormData();
             fd.append('_token', '{{ csrf_token() }}');
-            fd.append('study_id', $('#add-study_id').val());
+            fd.append('campus_id', $('#add-campus_id').val());
             fd.append('title', $('#add-title').val());
             fd.append('title_id', $('#add-title_id').val());
             fd.append('location', $('#add-location').val());
@@ -131,7 +147,7 @@
                 contentType: false,
                 success: function (res) {
                     $('#addModal').modal('hide');
-                    $('#add-study_id, #add-slug, #add-title, #add-title_id, #add-location').val('');
+                    $('#add-campus_id, #add-title, #add-title_id, #add-location').val('');
                     $('#add-img').val('');
                     table.ajax.reload();
                     toastr.success(res.message || 'Gallery category created successfully');
@@ -147,8 +163,7 @@
                 method: 'GET',
                 success: function (r) {
                     $('#edit-id').val(r.id);
-                    $('#edit-study_id').val(r.study_id);
-                    $('#edit-slug').val(r.slug);
+                    $('#edit-campus_id').val(r.campus_id);
                     $('#edit-title').val(r.title);
                     $('#edit-title_id').val(r.title_id);
                     $('#edit-location').val(r.location);
@@ -164,7 +179,7 @@
             const fd = new FormData();
             fd.append('_method', 'PUT');
             fd.append('_token', '{{ csrf_token() }}');
-            fd.append('study_id', $('#edit-study_id').val());
+            fd.append('campus_id', $('#edit-campus_id').val());
             fd.append('title', $('#edit-title').val());
             fd.append('title_id', $('#edit-title_id').val());
             fd.append('location', $('#edit-location').val());

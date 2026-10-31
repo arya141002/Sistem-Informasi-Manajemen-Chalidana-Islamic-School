@@ -233,7 +233,7 @@
         }
 
         function clearAddForm() {
-            $('#add-news_id, #add-tanggal, #add-slug, #add-title, #add-title_id').val('');
+            $('#add-news_id, #add-tanggal, #add-title, #add-title_id').val('');
             $('#add-img').val('');
             clearEditorValue('add-content');
             clearEditorValue('add-content_id');

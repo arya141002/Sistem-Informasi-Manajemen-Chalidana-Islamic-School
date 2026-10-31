@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\GalleryCategory;
+use App\Models\Campus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -12,12 +13,18 @@ class GalleryCategoryController extends Controller
     public function index()
     {
         $title = 'Gallery Category';
-        return view('admin.gallery_category', compact('title'));
+        $campuses = Campus::query()
+            ->select('id', 'title')
+            ->whereNull('deleted_at')
+            ->orderBy('title')
+            ->get();
+
+        return view('admin.gallery_category', compact('title', 'campuses'));
     }
 
     public function data()
     {
-        $query = GalleryCategory::query()->latest();
+        $query = GalleryCategory::with('campus:id,title')->latest();
         return datatables($query)
             ->addIndexColumn()
             ->addColumn('action', function ($item) {
@@ -30,7 +37,7 @@ class GalleryCategoryController extends Controller
 
     public function store(Request $request){
         $request->validate([
-            'study_id' => 'required|integer',
+            'campus_id' => 'required|exists:campuses,id',
             'title'    => 'required|string|max:255',
             'title_id' => 'required|string|max:255',
             'img'      => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -38,7 +45,7 @@ class GalleryCategoryController extends Controller
         ]);
     
         // Ambil input dasar
-        $data = $request->only(['study_id', 'title', 'title_id', 'location']);
+        $data = $request->only(['campus_id', 'title', 'title_id', 'location']);
     
         // 1. Generate slug otomatis
         $slug = Str::slug($request->title);
@@ -77,15 +84,24 @@ class GalleryCategoryController extends Controller
         $item = GalleryCategory::findOrFail($id);
 
         $request->validate([
-            'study_id' => 'required|integer',
+            'campus_id' => 'required|exists:campuses,id',
             'title' => 'required|string|max:255',
             'title_id' => 'required|string|max:255',
-            'slug' => 'required|string|max:200|unique:studies,slug,' . $id,
             'img' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'location' => 'required|string|max:200',
         ]);
 
-        $data = $request->only(['study_id', 'title', 'title_id', 'slug', 'location']);
+        $data = $request->only(['campus_id', 'title', 'title_id', 'location']);
+        $slug = Str::slug($request->title);
+        $originalSlug = $slug;
+        $count = 1;
+
+        while (GalleryCategory::where('slug', $slug)->where('id', '!=', $item->id)->exists()) {
+            $slug = "{$originalSlug}-{$count}";
+            $count++;
+        }
+
+        $data['slug'] = $slug;
         if ($request->hasFile('img')) {
             $destinationPath = public_path('images/gallery');
             if (!File::exists($destinationPath)) {
