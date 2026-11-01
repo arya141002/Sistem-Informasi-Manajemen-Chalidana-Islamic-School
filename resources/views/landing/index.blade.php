@@ -251,11 +251,11 @@
             <div class="row g-4 justify-content-center">
                 @forelse($events as $index => $event)
                     <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="{{ number_format(0.1 + ($index * 0.1), 1) }}s">
-                        <div class="blog-item">
+                        <div class="landing-content-card blog-item">
                             <div class="blog-img">
                                 <img
                                     src="{{ $event->img ? webp_asset('images/events/' . $event->img) : webp_asset('landing/img/blog-1.png') }}"
-                                    class="img-fluid rounded-top w-100"
+                                    class="img-fluid rounded-top w-100 landing-card-image"
                                     alt="{{ localized_value($event, 'title') }}"
                                     loading="lazy"
                                     decoding="async"
@@ -264,13 +264,14 @@
                                     <span>{{ $event->study->title ?? __('front.event') }}</span>
                                 </div>
                             </div>
-                            <div class="blog-content p-4 d-flex flex-column h-100">
-                                <div class="blog-comment d-flex justify-content-between mb-3">
+                            <div class="landing-card-content blog-content p-4 d-flex flex-column h-100">
+                                <div class="blog-comment d-flex justify-content-between mb-3 gap-3 flex-wrap">
                                     <div class="small"><span class="fa fa-calendar text-primary"></span> {{ $event->tanggal ? \Carbon\Carbon::parse($event->tanggal)->format('d M Y') : '-' }}</div>
                                     <div class="small"><span class="fa fa-folder text-primary"></span> {{ $event->study->title ?? __('front.general') }}</div>
+                                    <div class="small text-muted"><span class="fa fa-eye text-primary"></span> {{ __('front.views_count', ['count' => $event->views_count]) }}</div>
                                 </div>
-                                <a href="{{ route('landing.events.show', $event->slug) }}" class="h4 d-inline-block mb-3">{{ localized_value($event, 'title') }}</a>
-                                <p class="mb-3">{{ \Illuminate\Support\Str::limit(strip_tags(localized_value($event, 'content', '')), 120) }}</p>
+                                <a href="{{ route('landing.events.show', $event->slug) }}" class="landing-card-title h4 d-inline-block mb-3">{{ localized_value($event, 'title') }}</a>
+                                <p class="landing-card-summary mb-3">{{ \Illuminate\Support\Str::limit(strip_tags(localized_value($event, 'content', '')), 120) }}</p>
                                 <div class="mt-auto pt-3">
                                     <a href="{{ route('landing.events.show', $event->slug) }}" class="btn p-0">{{ __('front.read_more') }} <i class="fa fa-arrow-right"></i></a>
                                 </div>
@@ -299,7 +300,9 @@
                 @forelse($testimonials as $index => $testimonial)
                     @php
                         $testimonialFullContent = trim(strip_tags($testimonial->content ?? ''));
-                        $testimonialShortContent = \Illuminate\Support\Str::limit($testimonialFullContent, $testimonialExcerptLimit);
+                        $testimonialSummaryLength = min($testimonialExcerptLimit, 180);
+                        $testimonialSummary = \Illuminate\Support\Str::substr($testimonialFullContent, 0, $testimonialSummaryLength);
+                        $testimonialContinuation = \Illuminate\Support\Str::substr($testimonialFullContent, $testimonialSummaryLength);
                     @endphp
                     <div class="testimonial-slide wow fadeInUp" data-wow-delay="{{ number_format(0.2 + ($index * 0.15), 1) }}s">
                         <div class="team-item testimonial-card">
@@ -324,7 +327,18 @@
                                     {{ $testimonial->title }}
                                 </p>
                                 <p class="mb-2 small testimonial-meta">{{ $testimonial->grade->name ?? '-' }}{{ $testimonial->campus ? ' • ' . $testimonial->campus->title : '' }}</p>
-                                <p class="mb-0 testimonial-content">{{ $testimonialShortContent }}</p>
+                                @if($testimonialContinuation !== '')
+                                    <details class="landing-card-details testimonial-content mb-0">
+                                        <summary>
+                                            {{ $testimonialSummary }}
+                                            <span class="landing-card-read-more">{{ __('front.read_more') }}</span>
+                                        </summary>
+                                        <span class="landing-card-continuation">{{ $testimonialContinuation }}</span>
+                                        <button type="button" class="landing-card-read-less">{{ __('front.read_less') }}</button>
+                                    </details>
+                                @else
+                                    <p class="mb-0 testimonial-content">{{ $testimonialSummary }}</p>
+                                @endif
                                 <a
                                     href="{{ route('landing.testimonials') }}"
                                     class="btn btn-link p-0 mt-3 align-self-start testimonial-link"

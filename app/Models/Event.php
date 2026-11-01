@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Event extends Model
 {
@@ -20,5 +21,11 @@ class Event extends Model
     public function study()
     {
         return $this->belongsTo(CategoryStudy::class, 'study_id');
+    }
+
+    public function views(): HasMany
+    {
+        return $this->hasMany(ContentView::class, 'content_id')
+            ->where('content_type', self::class);
     }
 }

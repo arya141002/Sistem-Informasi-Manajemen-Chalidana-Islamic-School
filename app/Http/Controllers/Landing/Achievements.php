@@ -31,6 +31,7 @@ class Achievements extends Controller
             ->orderByDesc('tanggal')
             ->orderByDesc('created_at')
             ->paginate(9)
+            ->onEachSide(1)
             ->withQueryString();
 
         $settings = [

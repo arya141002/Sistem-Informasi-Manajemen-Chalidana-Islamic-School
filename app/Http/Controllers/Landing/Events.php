@@ -7,6 +7,7 @@ use App\Models\CampusArea;
 use App\Models\CategoryStudy;
 use App\Models\Event;
 use App\Models\Tagline;
+use App\Support\ContentViewTracker;
 use Illuminate\Http\Request;
 
 class Events extends Controller
@@ -41,10 +42,13 @@ class Events extends Controller
 
         $events = Event::query()
             ->with('study:id,title')
+            ->withCount('views')
             ->when($selectedStudy, fn ($query) => $query->where('study_id', $selectedStudy))
             ->orderByDesc('tanggal')
             ->orderByDesc('created_at')
+            ->orderByDesc('id')
             ->paginate(9)
+            ->onEachSide(1)
             ->withQueryString();
 
         return view('landing.events', array_merge(
@@ -60,12 +64,16 @@ class Events extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
+        app(ContentViewTracker::class)->record(Event::class, $event->id, request());
+        $event->loadCount('views');
+
         $relatedEvents = Event::query()
             ->with('study:id,title')
             ->where('id', '!=', $event->id)
             ->when($event->study_id, fn ($query) => $query->where('study_id', $event->study_id))
             ->orderByDesc('tanggal')
             ->orderByDesc('created_at')
+            ->orderByDesc('id')
             ->take(3)
             ->get();
 

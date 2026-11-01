@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\CategoryStudy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class EventController extends Controller
@@ -56,6 +57,7 @@ class EventController extends Controller
         }
 
         Event::create($data);
+        $this->clearLandingHomeCache();
         return response()->json(['message' => 'Event created successfully']);
     }
 
@@ -101,6 +103,7 @@ class EventController extends Controller
         }
 
         $item->update($data);
+        $this->clearLandingHomeCache();
         return response()->json(['message' => 'Event updated successfully']);
     }
 
@@ -114,7 +117,15 @@ class EventController extends Controller
             }
         }
         $item->delete();
+        $this->clearLandingHomeCache();
         return response()->json(['message' => 'Event deleted successfully']);
+    }
+
+    private function clearLandingHomeCache(): void
+    {
+        foreach (['id', 'en'] as $locale) {
+            Cache::forget('landing.home.v2.' . $locale);
+        }
     }
 
     private function generateUniqueSlug(string $title, ?int $ignoreId = null): string

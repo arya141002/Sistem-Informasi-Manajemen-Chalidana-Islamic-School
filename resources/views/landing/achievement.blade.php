@@ -40,7 +40,7 @@
             <div class="row g-4">
                 @forelse($achievements as $index => $achievement)
                     <div class="col-md-6 col-xl-4 wow fadeInUp" data-wow-delay="{{ number_format(0.2 + (($index % 6) * 0.1), 1) }}s">
-                        <article class="team-item h-100 shadow-sm border-0">
+                        <article class="landing-content-card team-item h-100 shadow-sm border-0">
                             <div class="team-img position-relative">
                                 <img
                                     src="{{ $achievement->img ? webp_asset('images/achievement/' . $achievement->img) : webp_asset('landing/img/blog-2.png') }}"
@@ -48,7 +48,7 @@
                                     alt="{{ localized_value($achievement, 'title') }}"
                                 >
                             </div>
-                            <div class="team-title p-4 h-100">
+                            <div class="landing-card-content team-title p-4 h-100">
                                 <div class="d-flex flex-wrap gap-2 mb-3">
                                     @if($achievement->campus)
                                         <span class="badge bg-light text-primary">{{ $achievement->campus->title }}</span><br />
@@ -62,10 +62,28 @@
                                 <p class="small mb-2">
                                     <i class="fa fa-calendar-alt me-2"></i>{{ $achievement->tanggal ? \Carbon\Carbon::parse($achievement->tanggal)->translatedFormat('d M Y') : __('front.events_date_tba') }}
                                 </p>
-                                <h4 class="mb-3 text-dark">{{ localized_value($achievement, 'title') }}</h4>
-                                <div class="mb-0 text-dark" style="text-align: justify;">
-                                    {!! localized_value($achievement, 'content', '<p>' . e(__('front.achievement_content_empty')) . '</p>') !!}
-                                </div>
+                                <h4 class="landing-card-title mb-3 text-dark">{{ localized_value($achievement, 'title') }}</h4>
+                                @php
+                                    $achievementContent = localized_value($achievement, 'content', '');
+                                    $achievementText = trim(strip_tags($achievementContent));
+                                    $achievementSummaryLength = 150;
+                                    $achievementSummary = \Illuminate\Support\Str::substr($achievementText, 0, $achievementSummaryLength);
+                                    $achievementContinuation = \Illuminate\Support\Str::substr($achievementText, $achievementSummaryLength);
+                                @endphp
+                                @if($achievementContinuation !== '')
+                                    <details class="landing-card-details landing-card-summary mb-0 text-dark" style="text-align: justify;">
+                                        <summary>
+                                            {{ $achievementSummary }}
+                                            <span class="landing-card-read-more">{{ __('front.read_more') }}</span>
+                                        </summary>
+                                        <span class="landing-card-continuation">{{ $achievementContinuation }}</span>
+                                        <button type="button" class="landing-card-read-less">{{ __('front.read_less') }}</button>
+                                    </details>
+                                @else
+                                    <p class="landing-card-summary mb-0 text-dark" style="text-align: justify;">
+                                        {{ $achievementSummary ?: __('front.achievement_content_empty') }}
+                                    </p>
+                                @endif
                             </div>
                         </article>
                     </div>

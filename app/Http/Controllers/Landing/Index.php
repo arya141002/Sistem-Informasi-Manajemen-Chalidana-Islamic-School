@@ -43,7 +43,7 @@ MARKDOWN;
         }
 
         $locale = current_locale();
-        $cacheKey = 'landing.home.' . $locale;
+        $cacheKey = 'landing.home.v2.' . $locale;
         $payload = Cache::remember($cacheKey, now()->addMinutes(10), function () {
             $tagline = Tagline::first();
             $aboutSchool = About_school::query()
@@ -63,7 +63,13 @@ MARKDOWN;
                 ->where('status', '1')
                 ->latest()
                 ->get();
-            $events = Event::with('study:id,title')->latest()->take(6)->get();
+            $events = Event::with('study:id,title')
+                ->withCount('views')
+                ->orderByDesc('tanggal')
+                ->orderByDesc('created_at')
+                ->orderByDesc('id')
+                ->take(6)
+                ->get();
             $testimonials = Testimonial::with(['grade:id,name', 'campus:id,title'])
                 ->where('status', true)
                 ->latest()

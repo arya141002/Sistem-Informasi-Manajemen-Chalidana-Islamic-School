@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Campus;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class GalleryCategory extends Model
 {
@@ -31,5 +32,11 @@ class GalleryCategory extends Model
     public function latestGallery()
     {
         return $this->hasOne(Gallery::class, 'img_id', 'id')->latestOfMany();
+    }
+
+    public function views(): HasMany
+    {
+        return $this->hasMany(ContentView::class, 'content_id')
+            ->where('content_type', self::class);
     }
 }

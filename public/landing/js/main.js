@@ -90,6 +90,17 @@
         return false;
     });
 
+    document.addEventListener('click', function (event) {
+        var readLess = event.target.closest('.landing-card-read-less');
+        if (!readLess) {
+            return;
+        }
+
+        event.preventDefault();
+        var details = readLess.closest('details');
+        if (details) {
+            details.removeAttribute('open');
+        }
+    });
 
 })(jQuery);
-

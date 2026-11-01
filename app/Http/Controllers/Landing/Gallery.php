@@ -7,6 +7,7 @@ use App\Models\CampusArea;
 use App\Models\Gallery as GalleryModel;
 use App\Models\GalleryCategory;
 use App\Models\Tagline;
+use App\Support\ContentViewTracker;
 use Illuminate\Http\Request;
 
 class Gallery extends Controller
@@ -35,8 +36,17 @@ class Gallery extends Controller
     {
         $categories = GalleryCategory::query()
             ->withCount('galleries')
-            ->latest('id') // Atau ->latest('created_at') jika ingin kategori terbarunya berdasarkan tanggal buat
-            ->get(['id', 'title', 'title_id', 'slug', 'img', 'location']);
+            ->withCount('views')
+            ->with([
+                'latestGallery' => fn ($query) => $query->select([
+                    'images.id',
+                    'images.img_id',
+                    'images.img',
+                ]),
+            ])
+            ->latest('id')
+            ->paginate(9)
+            ->withQueryString();
     
         return view('landing.gallery', array_merge(
             $this->sharedData(),
@@ -48,8 +58,12 @@ class Gallery extends Controller
     {
         $category = GalleryCategory::query()
             ->withCount('galleries')
+            ->withCount('views')
             ->where('slug', $slug)
             ->firstOrFail(['id', 'title', 'title_id', 'slug', 'img', 'location']);
+
+        app(ContentViewTracker::class)->record(GalleryCategory::class, $category->id, request());
+        $category->loadCount('views');
 
         $items = GalleryModel::query()
             ->with('category:id,title,title_id,slug,location')

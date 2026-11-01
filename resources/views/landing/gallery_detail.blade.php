@@ -29,6 +29,7 @@
                         <h4 class="text-primary">{{ __('front.gallery') }}</h4>
                         <h1 class="display-4 mb-3">{{ $pageTitle }}</h1>
                         <p class="mb-0">{{ $pageDesc }}</p>
+                        <small class="text-muted d-block mt-3"><i class="fa fa-eye text-primary me-1"></i>{{ __('front.views_count', ['count' => $category->views_count]) }}</small>
                     </div>
                 </div>
                 <div class="col-lg-4">

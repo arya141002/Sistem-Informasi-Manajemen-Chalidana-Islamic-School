@@ -7,6 +7,7 @@ use App\Models\CampusArea;
 use App\Models\Tagline;
 use App\Models\Whatsup as WhatsupModel;
 use App\Models\WhatsupCategory;
+use App\Support\ContentViewTracker;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
@@ -84,6 +85,7 @@ class WhatsUp extends Controller
 
         $items = WhatsupModel::query()
             ->with('category:id,slug,title,title_id')
+            ->withCount('views')
             ->when($category, fn (Builder $query) => $query->where('news_id', $category->id))
             ->when($search !== '', function (Builder $query) use ($search) {
                 $query->where(function (Builder $inner) use ($search) {
@@ -116,6 +118,9 @@ class WhatsUp extends Controller
             ->when($category, fn (Builder $query) => $query->where('news_id', $category->id))
             ->where('slug', $slug)
             ->firstOrFail();
+
+        app(ContentViewTracker::class)->record(WhatsupModel::class, $item->id, request());
+        $item->loadCount('views');
 
         $relatedItems = WhatsupModel::query()
             ->with('category:id,slug,title,title_id')

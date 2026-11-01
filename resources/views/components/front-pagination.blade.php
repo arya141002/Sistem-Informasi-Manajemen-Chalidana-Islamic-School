@@ -6,6 +6,7 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 0.6rem;
+            max-width: 100%;
         }
 
         .front-pagination .page-item {
@@ -57,14 +58,24 @@
 
         @media (max-width: 576px) {
             .front-pagination {
+                justify-content: flex-start;
+                flex-wrap: nowrap;
                 gap: 0.45rem;
+                overflow-x: auto;
+                padding: 0.25rem 0.15rem 0.7rem;
+                scrollbar-width: thin;
             }
 
             .front-pagination .page-link {
+                flex: 0 0 auto;
                 min-width: 42px;
                 height: 42px;
                 padding: 0 0.9rem;
                 font-size: 0.92rem;
+            }
+
+            .front-pagination .page-item.page-item-nav .page-link {
+                padding: 0 1rem;
             }
         }
     </style>
@@ -81,21 +92,20 @@
                 </li>
             @endif
 
-            @foreach ($elements as $element)
-                @if (is_string($element))
-                    <li class="page-item disabled" aria-disabled="true"><span class="page-link">{{ $element }}</span></li>
-                @endif
+            @php
+                $currentPage = $paginator->currentPage();
+                $lastPage = $paginator->lastPage();
+                $firstVisiblePage = max(1, min($currentPage - 1, $lastPage - 2));
+                $lastVisiblePage = min($lastPage, $firstVisiblePage + 2);
+            @endphp
 
-                @if (is_array($element))
-                    @foreach ($element as $page => $url)
-                        @if ($page == $paginator->currentPage())
-                            <li class="page-item active" aria-current="page"><span class="page-link">{{ $page }}</span></li>
-                        @else
-                            <li class="page-item"><a class="page-link" href="{{ $url }}">{{ $page }}</a></li>
-                        @endif
-                    @endforeach
+            @for ($page = $firstVisiblePage; $page <= $lastVisiblePage; $page++)
+                @if ($page === $currentPage)
+                    <li class="page-item active" aria-current="page"><span class="page-link">{{ $page }}</span></li>
+                @else
+                    <li class="page-item"><a class="page-link" href="{{ $paginator->url($page) }}">{{ $page }}</a></li>
                 @endif
-            @endforeach
+            @endfor
 
             @if ($paginator->hasMorePages())
                 <li class="page-item page-item-nav">

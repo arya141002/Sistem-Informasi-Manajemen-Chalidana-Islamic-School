@@ -37,6 +37,9 @@
                                 <span class="badge bg-light text-dark border px-3 py-2">
                                     <i class="fa fa-calendar-alt me-2"></i>{{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d M Y') : __('front.events_date_tba') }}
                                 </span>
+                                <span class="badge bg-light text-dark border px-3 py-2">
+                                    <i class="fa fa-eye me-2"></i>{{ __('front.views_count', ['count' => $item->views_count]) }}
+                                </span>
                             </div>
                             <h1 class="display-6 mb-4">{{ localized_value($item, 'title') }}</h1>
                             <div class="text-muted event-detail-content">

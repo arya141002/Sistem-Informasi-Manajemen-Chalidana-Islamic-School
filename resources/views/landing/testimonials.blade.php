@@ -43,7 +43,26 @@
                                     {{ $testimonial->title }}
                                 </p>
                                 <p class="mb-3 small testimonial-list-meta">{{ $testimonial->grade->name ?? '-' }}{{ $testimonial->campus ? ' • ' . $testimonial->campus->title : '' }}</p>
-                                <div class="mb-0 testimonial-list-content">{!! $testimonial->content !!}</div>
+                                @php
+                                    $testimonialContent = trim(strip_tags($testimonial->content ?? ''));
+                                    $testimonialSummaryLength = 180;
+                                    $testimonialSummary = \Illuminate\Support\Str::substr($testimonialContent, 0, $testimonialSummaryLength);
+                                    $testimonialContinuation = \Illuminate\Support\Str::substr($testimonialContent, $testimonialSummaryLength);
+                                @endphp
+                                @if($testimonialContinuation !== '')
+                                    <details class="landing-card-details testimonial-list-content mb-0">
+                                        <summary>
+                                            {{ $testimonialSummary }}
+                                            <span class="landing-card-read-more">{{ __('front.read_more') }}</span>
+                                        </summary>
+                                        <span class="landing-card-continuation">{{ $testimonialContinuation }}</span>
+                                        <button type="button" class="landing-card-read-less">{{ __('front.read_less') }}</button>
+                                    </details>
+                                @else
+                                    <p class="mb-0 testimonial-list-content">
+                                        {{ $testimonialSummary ?: __('front.testimonial_content_empty') }}
+                                    </p>
+                                @endif
                             </div>
                         </div>
                     </div>

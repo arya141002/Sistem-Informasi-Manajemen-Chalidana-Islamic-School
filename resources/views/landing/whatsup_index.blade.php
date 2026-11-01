@@ -35,7 +35,7 @@
             <div class="row g-4">
                 @forelse($items as $index => $item)
                     <div class="col-md-6 col-xl-4 wow fadeInUp" data-wow-delay="{{ number_format(0.2 + (($index % 6) * 0.1), 1) }}s">
-                        <article class="blog-item h-100 shadow-sm">
+                        <article class="landing-content-card blog-item h-100 shadow-sm">
                             <div class="blog-img">
                                 <img
                                     src="{{ $item->img ? webp_asset('images/whatsup/' . $item->img) : webp_asset('landing/img/blog-1.png') }}"
@@ -46,15 +46,16 @@
                                 <!--    <span>{{ localized_value($item->category, 'title', $title) }}</span>-->
                                 <!--</div>-->
                             </div>
-                            <div class="blog-content p-4 d-flex flex-column">
+                            <div class="landing-card-content blog-content p-4 d-flex flex-column">
                                 <div class="blog-comment d-flex justify-content-between mb-3 gap-3 flex-wrap">
                                     <div class="small"><span class="fa fa-calendar text-primary"></span> {{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d M Y') : __('front.events_date_tba') }}</div>
                                     <div class="small"><span class="fa fa-folder text-primary"></span> {{ localized_value($item->category, 'title', $title) }}</div>
+                                    <div class="small text-muted"><span class="fa fa-eye text-primary"></span> {{ __('front.views_count', ['count' => $item->views_count]) }}</div>
                                 </div>
-                                <h4 class="mb-3">
+                                <h4 class="landing-card-title mb-3">
                                     <a href="{{ route('landing.whatsup.show', [$section, $item->slug]) }}" class="text-dark">{{ localized_value($item, 'title') }}</a>
                                 </h4>
-                                <p class="mb-4 text-muted">{{ \Illuminate\Support\Str::limit(strip_tags(localized_value($item, 'content', '')), 130, '...') ?: __('front.whatsup_content_empty') }}</p>
+                                <p class="landing-card-summary mb-4 text-muted">{{ \Illuminate\Support\Str::limit(strip_tags(localized_value($item, 'content', '')), 130, '...') ?: __('front.whatsup_content_empty') }}</p>
                                 <a href="{{ route('landing.whatsup.show', [$section, $item->slug]) }}" class="btn p-0 mt-auto">{{ __('front.read_more') }} <i class="fa fa-arrow-right"></i></a>
                             </div>
                         </article>
